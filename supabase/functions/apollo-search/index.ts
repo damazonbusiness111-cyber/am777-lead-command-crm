@@ -72,11 +72,11 @@ Deno.serve(async (req) => {
         per_page: Math.min(perPage || 10, 25),
       };
 
-      const apolloRes = await fetch('https://api.apollo.io/api/v1/mixed_people/search', {
+      const apolloRes = await fetch('https://api.apollo.io/api/v1/mixed_people/api_search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': APOLLO_API_KEY,
+          'Authorization': `Bearer ${APOLLO_API_KEY}`,
         },
         body: JSON.stringify(payload),
       });
@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': APOLLO_API_KEY,
+          'Authorization': `Bearer ${APOLLO_API_KEY}`,
         },
         body: JSON.stringify({ id: apolloId, reveal_personal_emails: true }),
       });
