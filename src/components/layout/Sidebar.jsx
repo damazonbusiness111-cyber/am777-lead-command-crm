@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: '◆' },
   { to: '/lead-generator', label: 'Lead Generator', icon: '✦' },
+  { to: '/generate-leads', label: 'Generate Prospect Leads', icon: '⌕' },
   { to: '/prospects', label: 'Prospects CRM', icon: '▣' },
   { to: '/outreach', label: 'Outreach Snippets', icon: '✉' },
   { to: '/follow-ups', label: 'Follow-Up Board', icon: '⏱' },

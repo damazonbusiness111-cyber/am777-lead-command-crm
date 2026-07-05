@@ -237,6 +237,61 @@ export function DataProvider({ children }) {
     return outreachLogs.filter((l) => l.prospectId === prospectId);
   }
 
+  // --- Apollo prospect lead generation ---
+  // Search never reveals emails (cheap); reveal is a separate explicit
+  // per-lead action so Apollo credit usage stays under the admin's control.
+  async function searchApolloLeads(query) {
+    const { data, error } = await supabase.functions.invoke('apollo-search', {
+      body: { action: 'search', query },
+    });
+    if (error) {
+      reportError('Search Apollo leads', error);
+      return { results: [] };
+    }
+    if (data?.error) {
+      reportError('Search Apollo leads', new Error(data.error));
+      return { results: [] };
+    }
+    return data;
+  }
+
+  async function revealApolloContact(apolloId) {
+    const { data, error } = await supabase.functions.invoke('apollo-search', {
+      body: { action: 'reveal', query: { apolloId } },
+    });
+    if (error) {
+      reportError('Reveal contact', error);
+      return null;
+    }
+    if (data?.error) {
+      reportError('Reveal contact', new Error(data.error));
+      return null;
+    }
+    return data.result;
+  }
+
+  async function createProspectFromApolloLead(lead, extra = {}) {
+    return addProspect({
+      companyName: lead.company || lead.name || 'Unknown Company',
+      contactName: lead.name || '',
+      roleTitle: lead.title || '',
+      email: lead.email || '',
+      phone: lead.phone || '',
+      website: lead.website || '',
+      facebookPage: '',
+      linkedin: lead.linkedin || '',
+      niche: extra.niche || '',
+      country: lead.location || '',
+      leadSource: 'Apollo.io',
+      sourceURL: lead.linkedin || lead.website || '',
+      problemObserved: extra.problemObserved || '',
+      serviceFit: extra.serviceFit || '',
+      leadScore: 50,
+      priority: 'Medium',
+      notes: `Imported from Apollo lead search${lead.title ? ` — ${lead.title}` : ''}.`
+    });
+  }
+
   // --- Follow-ups ---
   async function addFollowUp(data) {
     const now = new Date().toISOString();
@@ -369,6 +424,7 @@ export function DataProvider({ children }) {
       prospects, outreachLogs, followups, deals, settings, templates,
       addProspect, updateProspect, deleteProspect, updateProspectStatus, searchProspects,
       addOutreachLog, getOutreachLogsByProspect,
+      searchApolloLeads, revealApolloContact, createProspectFromApolloLead,
       addFollowUp, markFollowUpDone, skipFollowUp, rescheduleFollowUp, deleteFollowUp,
       addDeal, updateDeal, deleteDeal,
       saveLeadTemplate, deleteLeadTemplate,

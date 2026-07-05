@@ -43,6 +43,17 @@ npm run preview   # serve the production build locally to sanity-check it
 
 Routing note: the app uses `HashRouter` (URLs look like `/#/prospects`), specifically so it deploys cleanly as a static site with **zero server rewrite config** — no `vercel.json` needed.
 
+## Generate Prospect Leads (Apollo.io)
+
+The "Generate Prospect Leads" page pulls real business contacts from Apollo.io — search by niche, job title, and location, then select which results to import as Prospects. This is separate from the Lead Generator page, which only produces template-based angles/snippets, not real contact data.
+
+**Setup:**
+1. Create an Apollo.io account and generate an API key (Settings → Integrations → API).
+2. Set it as a Supabase Edge Function secret — **never** put it in a `VITE_` frontend env var, since those ship in the public JS bundle: Supabase Dashboard → Edge Functions → Secrets → add `APOLLO_API_KEY`.
+3. Deploy `supabase/functions/apollo-search/index.ts` (Dashboard → Edge Functions → Deploy a new function → Via Editor, paste the file, name it `apollo-search`). It requires a signed-in Supabase session (same auth as the rest of the app) on every call.
+
+**Credit-conscious by design:** searching is cheap and doesn't reveal emails. Revealing a specific contact's email is a separate, explicit per-lead button that costs 1 Apollo credit — nothing bulk-reveals or auto-spends credits.
+
 ## Data model & storage
 
 Six Postgres tables (see `supabase/schema.sql`): `prospects`, `outreach_logs`, `followups`, `deals`, `templates`, and a single-row `settings` table. The app maps camelCase JS objects to snake_case columns in `src/lib/supabaseMappers.js` — pages never talk to Supabase directly, only through `src/context/DataContext.jsx`.

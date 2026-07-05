@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import LeadGenerator from './pages/LeadGenerator';
+import GenerateLeads from './pages/GenerateLeads';
 import Prospects from './pages/Prospects';
 import OutreachSnippets from './pages/OutreachSnippets';
 import FollowUpBoard from './pages/FollowUpBoard';
@@ -33,6 +34,7 @@ function AuthGate() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/lead-generator" element={<LeadGenerator />} />
+            <Route path="/generate-leads" element={<GenerateLeads />} />
             <Route path="/prospects" element={<Prospects />} />
             <Route path="/outreach" element={<OutreachSnippets />} />
             <Route path="/follow-ups" element={<FollowUpBoard />} />
