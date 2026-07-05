@@ -1,0 +1,27 @@
+import { useState } from 'react';
+import { useToast } from '../../context/ToastContext';
+
+export default function CopyButton({ text, label = 'Copy' }) {
+  const [copied, setCopied] = useState(false);
+  const { showToast } = useToast();
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text || '');
+      setCopied(true);
+      showToast('Copied to clipboard');
+      setTimeout(() => setCopied(false), 1500);
+    } catch (err) {
+      showToast('Could not copy — select and copy manually', 'error');
+    }
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="inline-flex items-center gap-1.5 rounded-lg border border-gold/30 bg-gold/10 px-3 py-1.5 text-xs font-medium text-gold hover:bg-gold/20 transition-colors"
+    >
+      {copied ? 'Copied ✓' : label}
+    </button>
+  );
+}
