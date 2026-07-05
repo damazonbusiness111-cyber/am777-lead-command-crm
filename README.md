@@ -1,21 +1,29 @@
 # AM777 Lead Command CRM
 
-Private internal PWA dashboard for AM777 Automation Solutions — generate niche-based lead angles, track prospects, log outreach, manage follow-ups, and track deals/revenue. Everything runs client-side with `localStorage`; there is no backend yet.
+Private internal PWA dashboard for AM777 Automation Solutions — generate niche-based lead angles, track prospects, log outreach, manage follow-ups, and track deals/revenue. Backed by Supabase (Postgres) so data is real, online, and shared across every device you sign into.
 
 **"I generate. I outreach. I earn."**
 
 ## Stack
 
-React + Vite + Tailwind CSS + `vite-plugin-pwa`. No paid backend, no Supabase, no Google Sheets, no AI API — all lead-angle/offer/outreach generation is template-based string logic in `src/lib/templates.js`.
+React + Vite + Tailwind CSS + `vite-plugin-pwa` + Supabase (Postgres + Auth). All lead-angle/offer/outreach generation is still template-based string logic in `src/lib/templates.js` — no AI API, no scraping.
+
+## One-time Supabase setup
+
+1. Create a free project at [supabase.com](https://supabase.com) (you'll need your own account — this can't be automated on your behalf).
+2. In the project's **SQL Editor**, paste and run [`supabase/schema.sql`](supabase/schema.sql). It creates all 6 tables and turns on Row Level Security so only a signed-in user can read/write anything.
+3. Create your one admin login: **Authentication → Users → Add user** (email + password). There is no public sign-up form in this app on purpose — accounts are only ever created by you, in the dashboard.
+4. Grab your keys from **Project Settings → API**: the **Project URL** and the **anon public** key (not the `service_role` key — that one must never end up in frontend code).
 
 ## Run locally
 
 ```bash
+cp .env.example .env.local   # then fill in your Supabase URL + anon key
 npm install
 npm run dev
 ```
 
-Open the printed local URL (default `http://localhost:5173`, or whatever port Vite picks).
+Open the printed local URL and sign in with the admin user you created in Supabase.
 
 ## Build for production
 
@@ -28,25 +36,20 @@ npm run preview   # serve the production build locally to sanity-check it
 
 ## Deploy to Vercel
 
-1. Push this folder to its own GitHub repo (or a subpath — see Vercel's "Root Directory" project setting if it's nested).
-2. In Vercel: **New Project** → import the repo.
-3. Framework preset: **Vite**. Build command: `npm run build`. Output directory: `dist`. (Vercel auto-detects these for a Vite project — you shouldn't need to override anything.)
-4. Deploy. No environment variables are required for this MVP.
+1. Push this folder to its own GitHub repo.
+2. In Vercel: **New Project** → import the repo. Framework preset **Vite** is auto-detected (build command `npm run build`, output `dist`).
+3. Before deploying, add the environment variables from your `.env.local` to the Vercel project (**Settings → Environment Variables**): `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. Without these the deployed app will show a console warning and every Supabase call will fail.
+4. Deploy.
 
-Routing note: the app uses `HashRouter` (URLs look like `/#/prospects`), specifically so it deploys cleanly as a static site with **zero server rewrite config** — no `vercel.json` needed. If you later switch to `BrowserRouter` for cleaner URLs, add a `vercel.json` rewrite (`{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }`) or client-side routes will 404 on refresh.
+Routing note: the app uses `HashRouter` (URLs look like `/#/prospects`), specifically so it deploys cleanly as a static site with **zero server rewrite config** — no `vercel.json` needed.
 
 ## Data model & storage
 
-All data lives in the browser's `localStorage` under these keys (see `src/lib/storage.js`):
+Six Postgres tables (see `supabase/schema.sql`): `prospects`, `outreach_logs`, `followups`, `deals`, `templates`, and a single-row `settings` table. The app maps camelCase JS objects to snake_case columns in `src/lib/supabaseMappers.js` — pages never talk to Supabase directly, only through `src/context/DataContext.jsx`.
 
-- `am777_prospects`
-- `am777_outreach_logs`
-- `am777_followups`
-- `am777_deals`
-- `am777_settings`
-- `am777_templates`
+**Auth model:** every table requires `auth.role() = 'authenticated'` (see the RLS policies at the bottom of `schema.sql`) — there's no per-row ownership check, since this is a single-admin app, not multi-tenant. Anyone signed in can read/write everything. Because the Supabase anon key is embedded in the frontend bundle (unavoidable for any client-side Supabase app), **the login gate is the actual security boundary here, not the key** — don't disable RLS or add a public sign-up flow without re-thinking that.
 
-Because it's `localStorage`, data is per-browser/per-device — it does not sync across devices and clearing browser data erases it. **Use Settings → Export Data regularly as a backup**; Import Data restores from that JSON file.
+**Backups:** Settings → Export Data downloads a full JSON snapshot of all 6 tables; Import Data upserts a backup file back in. Worth doing occasionally even with a real database behind it.
 
 ## Modules
 
@@ -59,9 +62,9 @@ Because it's `localStorage`, data is per-browser/per-device — it does not sync
 | Follow-Up Board | `/follow-ups` | Overdue / Due Today / Due This Week / Completed columns, mark done, reschedule, log outreach, move prospect status |
 | Deals / Revenue | `/deals` | Add/edit/delete deals, pipeline/won/paid/unpaid revenue cards |
 | Daily Command | `/daily` | Today's execution view — due/overdue follow-ups, hot prospects, prospects missing a next follow-up date, suggested actions, daily checklist |
-| Settings | `/settings` | Brand name, owner name, default currency, n8n webhook URL placeholder, export/import/clear data |
+| Settings | `/settings` | Brand name, owner name, default currency, n8n webhook URL placeholder, export/import data, sign out |
 
-## Automatic behavior (client-side, mirrors the eventual n8n logic)
+## Automatic behavior (mirrors the eventual n8n logic)
 
 - Adding a prospect auto-creates a first follow-up task (due in 2 days).
 - Moving a prospect's status to **Follow-Up**, **Proposal Sent**, or **Booked Call** auto-creates the matching follow-up task type.
@@ -73,10 +76,10 @@ None of this is spam-adjacent automation — nothing sends a message on your beh
 
 ## Adding an n8n webhook later
 
-`Settings` already has an `n8nWebhookUrl` field wired into `localStorage` (`am777_settings.n8nWebhookUrl`) so the UI is ready — it isn't called anywhere yet. When you're ready to add automation, the natural hook points are `addProspect`, `addOutreachLog`, and `updateProspectStatus` in `src/context/DataContext.jsx`: fire a `fetch(settings.n8nWebhookUrl, { method: 'POST', body: JSON.stringify(...) })` inside those functions once you have a real n8n instance to receive it.
+`Settings` has an `n8nWebhookUrl` field (stored in the `settings` table) so the UI is ready — it isn't called anywhere yet. The natural hook points are `addProspect`, `addOutreachLog`, and `updateProspectStatus` in `src/context/DataContext.jsx`: fire a `fetch(settings.n8nWebhookUrl, { method: 'POST', body: JSON.stringify(...) })` inside those functions once you have a real n8n instance to receive it.
 
 ## Known MVP limitations (by design — see V2 notes)
 
-- Data is local to one browser only (no multi-device sync, no login).
+- Single shared admin login — no per-user permissions or multi-seat access yet. Fine for a one-operator agency tool; revisit if VAs need their own restricted logins.
 - Icons are a single placeholder PNG reused for both 192px and 512px manifest entries — swap in real AM777 icon assets before treating the "installable app" experience as final.
-- No Google Sheets / Supabase / paid API — everything is template-string based, per the build brief.
+- No AI API, no scraping — lead angles and snippets are template-string based, per the build brief.

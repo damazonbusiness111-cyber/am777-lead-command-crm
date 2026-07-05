@@ -74,9 +74,9 @@ export default function LeadGenerator() {
     showToast('Saved as lead template');
   }
 
-  function handleCreateProspect() {
+  async function handleCreateProspect() {
     if (!result) return;
-    const prospect = addProspect({
+    const prospect = await addProspect({
       companyName: `${form.niche} Prospect`,
       contactName: '',
       roleTitle: '',
@@ -95,6 +95,7 @@ export default function LeadGenerator() {
       priority: 'Medium',
       notes: `Generated from Lead Generator — ${form.tone} tone, ${form.outreachChannel} channel.`
     });
+    if (!prospect) return;
     showToast('Prospect created — fill in real contact details in Prospects CRM');
     navigate('/prospects', { state: { openProspectId: prospect.id } });
   }

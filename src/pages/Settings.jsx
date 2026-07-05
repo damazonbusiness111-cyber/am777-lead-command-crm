@@ -1,19 +1,21 @@
 import { useRef, useState } from 'react';
 import { useData } from '../context/DataContext';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 
 const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-gold/50';
 
 export default function Settings() {
-  const { settings, updateSettings, handleExport, handleImport, handleClearAll } = useData();
+  const { settings, updateSettings, handleExport, handleImport } = useData();
   const { showToast } = useToast();
+  const { session, signOut } = useAuth();
   const [form, setForm] = useState(settings);
   const fileInputRef = useRef(null);
 
   function set(key, value) { setForm((prev) => ({ ...prev, [key]: value })); }
 
-  function saveSettings() {
-    updateSettings(form);
+  async function saveSettings() {
+    await updateSettings(form);
     showToast('Settings saved');
   }
 
@@ -33,10 +35,10 @@ export default function Settings() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
         const bundle = JSON.parse(reader.result);
-        handleImport(bundle);
+        await handleImport(bundle);
         showToast('Data imported');
       } catch (err) {
         showToast('Invalid backup file', 'error');
@@ -44,12 +46,6 @@ export default function Settings() {
     };
     reader.readAsText(file);
     e.target.value = '';
-  }
-
-  function clearAll() {
-    if (!confirm('This will permanently erase all local CRM data. Export a backup first if unsure. Continue?')) return;
-    handleClearAll();
-    showToast('All local data cleared');
   }
 
   return (
@@ -89,7 +85,7 @@ export default function Settings() {
 
       <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5 space-y-3">
         <h2 className="font-semibold">Data Management</h2>
-        <p className="text-xs text-white/40">All data lives in this browser's localStorage. Export regularly as a backup.</p>
+        <p className="text-xs text-white/40">Data lives in Supabase now — shared across every device you sign into. Export regularly as an offline backup.</p>
         <div className="flex flex-wrap gap-3">
           <button onClick={exportToFile} className="rounded-xl border border-white/15 px-4 py-2 text-sm hover:border-gold/40">
             Export Data
@@ -98,10 +94,15 @@ export default function Settings() {
             Import Data
           </button>
           <input ref={fileInputRef} type="file" accept="application/json" onChange={onFileSelected} className="hidden" />
-          <button onClick={clearAll} className="rounded-xl border border-red-500/30 text-red-300 px-4 py-2 text-sm hover:bg-red-500/10">
-            Clear Local Data
-          </button>
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5 space-y-3">
+        <h2 className="font-semibold">Account</h2>
+        <p className="text-xs text-white/40">Signed in as {session?.user?.email}</p>
+        <button onClick={signOut} className="rounded-xl border border-red-500/30 text-red-300 px-4 py-2 text-sm hover:bg-red-500/10">
+          Sign Out
+        </button>
       </section>
     </div>
   );
