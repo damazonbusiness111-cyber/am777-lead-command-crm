@@ -20,6 +20,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-charcoal-950 text-white flex items-center justify-center p-4">
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-charcoal-800/60 backdrop-blur-md shadow-glass p-8">
+        <img src="/icons/icon-192.png" alt="AM777" className="w-16 h-16 rounded-2xl mx-auto mb-4 shadow-brand" />
         <p className="text-brand font-bold tracking-wide text-sm text-center">AM777</p>
         <h1 className="text-xl font-semibold text-center mt-1 mb-6">Lead Command CRM</h1>
 

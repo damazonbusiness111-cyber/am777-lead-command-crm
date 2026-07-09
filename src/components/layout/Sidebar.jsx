@@ -14,9 +14,12 @@ const NAV_ITEMS = [
 export default function Sidebar({ onNavigate }) {
   return (
     <div className="flex h-full flex-col">
-      <div className="px-5 py-6 border-b border-white/10">
-        <p className="text-brand font-bold tracking-wide text-sm">AM777</p>
-        <p className="text-white font-semibold text-lg leading-tight">Lead Command CRM</p>
+      <div className="px-5 py-6 border-b border-white/10 flex items-center gap-3">
+        <img src="/icons/icon-192.png" alt="AM777" className="w-10 h-10 rounded-xl flex-shrink-0" />
+        <div>
+          <p className="text-brand font-bold tracking-wide text-sm">AM777</p>
+          <p className="text-white font-semibold text-base leading-tight">Lead Command CRM</p>
+        </div>
       </div>
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         {NAV_ITEMS.map((item) => (
