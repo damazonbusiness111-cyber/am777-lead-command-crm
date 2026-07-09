@@ -1,9 +1,17 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { isOverdue, isDueToday, formatDate, formatDateTime } from '../lib/dateUtils';
 import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
+
+const PipelineChart = lazy(() => import('../components/charts/PipelineChart'));
+const RevenueChart = lazy(() => import('../components/charts/RevenueChart'));
+
+function ChartFallback() {
+  return <div className="h-64 flex items-center justify-center text-sm text-white/30">Loading chart...</div>;
+}
 
 export default function Dashboard() {
   const { prospects, outreachLogs, followups, deals, settings } = useData();
@@ -21,6 +29,12 @@ export default function Dashboard() {
     .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
   const paidRevenue = deals
     .filter((d) => d.paymentStatus === 'Paid')
+    .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const wonRevenue = deals
+    .filter((d) => d.dealStatus === 'Won' || d.dealStatus === 'Paid')
+    .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const unpaidRevenue = deals
+    .filter((d) => d.paymentStatus !== 'Paid')
     .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
 
   const currency = settings.defaultCurrency || 'PHP';
@@ -62,6 +76,30 @@ export default function Dashboard() {
         <MetricCard label="Won Deals" value={wonDeals} />
         <MetricCard label="Pipeline Value" value={money(pipelineValue)} accent />
         <MetricCard label="Paid Revenue" value={money(paidRevenue)} accent />
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
+          <h2 className="font-semibold mb-1">Pipeline by Status</h2>
+          <p className="text-xs text-white/40 mb-2">Where every prospect currently sits.</p>
+          <Suspense fallback={<ChartFallback />}>
+            <PipelineChart prospects={prospects} />
+          </Suspense>
+        </section>
+
+        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
+          <h2 className="font-semibold mb-1">Revenue Breakdown</h2>
+          <p className="text-xs text-white/40 mb-2">Pipeline vs. won vs. collected.</p>
+          <Suspense fallback={<ChartFallback />}>
+            <RevenueChart
+              pipelineValue={pipelineValue}
+              wonRevenue={wonRevenue}
+              paidRevenue={paidRevenue}
+              unpaidRevenue={unpaidRevenue}
+              currency={currency}
+            />
+          </Suspense>
+        </section>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
