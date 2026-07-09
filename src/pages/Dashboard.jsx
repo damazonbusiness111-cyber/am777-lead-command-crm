@@ -68,7 +68,7 @@ export default function Dashboard() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Today's Follow-Ups</h2>
-            <Link to="/follow-ups" className="text-xs text-gold hover:underline">View board →</Link>
+            <Link to="/follow-ups" className="text-xs text-brand hover:underline">View board →</Link>
           </div>
           {todaysFollowUps.length === 0 ? (
             <EmptyState title="Nothing due today" subtitle="You're all caught up." />
@@ -90,7 +90,7 @@ export default function Dashboard() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Hot Prospects</h2>
-            <Link to="/prospects" className="text-xs text-gold hover:underline">View all →</Link>
+            <Link to="/prospects" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
           {hotProspects.length === 0 ? (
             <EmptyState title="No hot prospects yet" subtitle="Qualify or book calls to see them here." />
@@ -112,7 +112,7 @@ export default function Dashboard() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Recent Outreach</h2>
-            <Link to="/outreach" className="text-xs text-gold hover:underline">View all →</Link>
+            <Link to="/outreach" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
           {recentOutreach.length === 0 ? (
             <EmptyState title="No outreach logged yet" />
@@ -134,7 +134,7 @@ export default function Dashboard() {
         <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold">Recent Deals</h2>
-            <Link to="/deals" className="text-xs text-gold hover:underline">View all →</Link>
+            <Link to="/deals" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
           {recentDeals.length === 0 ? (
             <EmptyState title="No deals yet" />

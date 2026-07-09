@@ -46,7 +46,7 @@ export default function DailyCommand() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold">Daily Command</h1>
-        <p className="text-white/40 text-sm mt-1 italic">I generate. I outreach. I earn.</p>
+        <p className="text-white/40 text-sm mt-1">Today's execution priorities.</p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -107,8 +107,8 @@ export default function DailyCommand() {
         </section>
       </div>
 
-      <section className="rounded-2xl border border-gold/20 bg-charcoal-800/50 p-5">
-        <h2 className="font-semibold text-gold mb-3">Suggested Next Actions</h2>
+      <section className="rounded-2xl border border-brand/20 bg-charcoal-800/50 p-5">
+        <h2 className="font-semibold text-brand mb-3">Suggested Next Actions</h2>
         <ul className="space-y-1.5 text-sm text-white/80 list-disc list-inside">
           {suggestedActions.map((a) => <li key={a}>{a}</li>)}
         </ul>
@@ -119,14 +119,14 @@ export default function DailyCommand() {
         <ul className="space-y-2">
           {CHECKLIST_ITEMS.map((item, i) => (
             <li key={item} className="flex items-center gap-3">
-              <input type="checkbox" checked={checked[i]} onChange={() => toggle(i)} className="w-4 h-4 accent-gold" />
+              <input type="checkbox" checked={checked[i]} onChange={() => toggle(i)} className="w-4 h-4 accent-brand" />
               <span className={`text-sm ${checked[i] ? 'line-through text-white/30' : 'text-white/80'}`}>{item}</span>
             </li>
           ))}
         </ul>
         <div className="mt-4 flex gap-3 text-xs">
-          <Link to="/lead-generator" className="text-gold hover:underline">Go to Lead Generator →</Link>
-          <Link to="/follow-ups" className="text-gold hover:underline">Go to Follow-Up Board →</Link>
+          <Link to="/lead-generator" className="text-brand hover:underline">Go to Lead Generator →</Link>
+          <Link to="/follow-ups" className="text-brand hover:underline">Go to Follow-Up Board →</Link>
         </div>
       </section>
     </div>

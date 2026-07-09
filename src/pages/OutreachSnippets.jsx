@@ -63,7 +63,7 @@ export default function OutreachSnippets() {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }, [outreachLogs, channelFilter, directionFilter, prospectFilter]);
 
-  const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white outline-none focus:border-gold/50';
+  const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white outline-none focus:border-brand/50';
 
   return (
     <div className="space-y-8">
@@ -93,7 +93,7 @@ export default function OutreachSnippets() {
           </select>
         </label>
         <div className="sm:col-span-3">
-          <button onClick={handleGenerate} className="rounded-xl bg-gold text-charcoal-950 font-semibold px-5 py-2.5 text-sm hover:bg-gold-light">
+          <button onClick={handleGenerate} className="rounded-xl bg-brand text-charcoal-950 font-semibold px-5 py-2.5 text-sm hover:bg-brand-light">
             Generate Sequence
           </button>
         </div>
@@ -104,10 +104,10 @@ export default function OutreachSnippets() {
           {Object.entries(snippets).map(([stage, text]) => (
             <div key={stage} className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold text-gold">{stage}</h3>
+                <h3 className="font-semibold text-brand">{stage}</h3>
                 <div className="flex gap-2">
                   <CopyButton text={text} />
-                  <button onClick={() => handleLogSnippet(stage, text)} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-gold/40">
+                  <button onClick={() => handleLogSnippet(stage, text)} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-brand/40">
                     Log as Sent
                   </button>
                 </div>
@@ -115,7 +115,7 @@ export default function OutreachSnippets() {
               <textarea
                 defaultValue={text}
                 rows={3}
-                className="w-full rounded-lg border border-white/10 bg-charcoal-900/60 px-3 py-2 text-sm text-white/85 outline-none focus:border-gold/50"
+                className="w-full rounded-lg border border-white/10 bg-charcoal-900/60 px-3 py-2 text-sm text-white/85 outline-none focus:border-brand/50"
               />
             </div>
           ))}

@@ -14,7 +14,7 @@ export default function Layout({ children }) {
       {/* Mobile top nav */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-charcoal-900/95 border-b border-white/10 backdrop-blur-md">
         <div>
-          <p className="text-gold font-bold text-xs tracking-wide">AM777</p>
+          <p className="text-brand font-bold text-xs tracking-wide">AM777</p>
           <p className="text-white font-semibold text-sm leading-tight">Lead Command CRM</p>
         </div>
         <button

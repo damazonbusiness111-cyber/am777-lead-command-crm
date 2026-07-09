@@ -26,7 +26,7 @@ function Select({ label, value, options, onChange }) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white outline-none focus:border-gold/50"
+        className="mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white outline-none focus:border-brand/50"
       >
         {options.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
@@ -116,7 +116,7 @@ export default function LeadGenerator() {
               value={form.location}
               onChange={(e) => set('location', e.target.value)}
               placeholder="e.g. Metro Manila"
-              className="mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-gold/50"
+              className="mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-brand/50"
             />
           </label>
           <Select label="Offer Type" value={form.offerType} options={OFFER_TYPES} onChange={(v) => set('offerType', v)} />
@@ -128,7 +128,7 @@ export default function LeadGenerator() {
         </div>
         <button
           onClick={handleGenerate}
-          className="mt-5 rounded-xl bg-gold text-charcoal-950 font-semibold px-5 py-2.5 text-sm hover:bg-gold-light transition-colors"
+          className="mt-5 rounded-xl bg-brand text-charcoal-950 font-semibold px-5 py-2.5 text-sm hover:bg-brand-light transition-colors"
         >
           Generate Lead Angle
         </button>
@@ -137,12 +137,12 @@ export default function LeadGenerator() {
       {result && (
         <div className="space-y-4">
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-            <h3 className="font-semibold text-gold mb-2">Target Prospect Profile</h3>
+            <h3 className="font-semibold text-brand mb-2">Target Prospect Profile</h3>
             <p className="text-sm text-white/80">{result.targetProspectProfile}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-            <h3 className="font-semibold text-gold mb-2">Search Keywords</h3>
+            <h3 className="font-semibold text-brand mb-2">Search Keywords</h3>
             <div className="flex flex-wrap gap-2">
               {result.searchKeywords.map((k) => (
                 <span key={k} className="text-xs rounded-full border border-white/15 px-3 py-1 text-white/70">{k}</span>
@@ -151,7 +151,7 @@ export default function LeadGenerator() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-            <h3 className="font-semibold text-gold mb-2">Qualification Checklist</h3>
+            <h3 className="font-semibold text-brand mb-2">Qualification Checklist</h3>
             <ul className="space-y-1.5 list-disc list-inside text-sm text-white/80">
               {result.qualificationChecklist.map((q) => <li key={q}>{q}</li>)}
             </ul>
@@ -159,7 +159,7 @@ export default function LeadGenerator() {
 
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gold">Offer Snippet</h3>
+              <h3 className="font-semibold text-brand">Offer Snippet</h3>
               <CopyButton text={result.offerSnippet} label="Copy Offer Snippet" />
             </div>
             <p className="text-sm text-white/80 whitespace-pre-line">{result.offerSnippet}</p>
@@ -167,7 +167,7 @@ export default function LeadGenerator() {
 
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gold">Cold Outreach Snippet</h3>
+              <h3 className="font-semibold text-brand">Cold Outreach Snippet</h3>
               <CopyButton text={result.outreachSnippet} label="Copy Outreach Snippet" />
             </div>
             <p className="text-sm text-white/80 whitespace-pre-line">{result.outreachSnippet}</p>
@@ -175,27 +175,27 @@ export default function LeadGenerator() {
 
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="font-semibold text-gold">Follow-Up Snippet</h3>
+              <h3 className="font-semibold text-brand">Follow-Up Snippet</h3>
               <CopyButton text={result.followUpSnippet} label="Copy Follow-Up Snippet" />
             </div>
             <p className="text-sm text-white/80 whitespace-pre-line">{result.followUpSnippet}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-            <h3 className="font-semibold text-gold mb-2">CTA</h3>
+            <h3 className="font-semibold text-brand mb-2">CTA</h3>
             <p className="text-sm text-white/80">{result.cta}</p>
           </div>
 
           <div className="flex flex-wrap gap-3">
             <button
               onClick={handleSaveTemplate}
-              className="rounded-xl border border-white/15 px-4 py-2.5 text-sm font-medium text-white hover:border-gold/40"
+              className="rounded-xl border border-white/15 px-4 py-2.5 text-sm font-medium text-white hover:border-brand/40"
             >
               Save as Lead Template
             </button>
             <button
               onClick={handleCreateProspect}
-              className="rounded-xl bg-gold text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-gold-light"
+              className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-brand-light"
             >
               Create Prospect
             </button>

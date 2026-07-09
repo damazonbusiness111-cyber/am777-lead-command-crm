@@ -11,7 +11,7 @@ const DEAL_STATUSES = ['Draft', 'Proposal Sent', 'Negotiating', 'Won', 'Lost', '
 const INVOICE_STATUSES = ['Not Created', 'Created', 'Sent', 'Paid'];
 const PAYMENT_STATUSES = ['Unpaid', 'Partial', 'Paid'];
 
-const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-gold/50';
+const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-brand/50';
 
 function Field({ label, children }) {
   return <label className="block"><span className="text-xs text-white/50">{label}</span>{children}</label>;
@@ -69,7 +69,7 @@ function DealForm({ prospects, initial, onSubmit, onCancel }) {
       </Field>
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel} className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white/70">Cancel</button>
-        <button type="submit" className="rounded-xl bg-gold text-charcoal-950 font-semibold px-4 py-2 text-sm">Save Deal</button>
+        <button type="submit" className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2 text-sm">Save Deal</button>
       </div>
     </form>
   );
@@ -106,7 +106,7 @@ export default function Deals() {
           <h1 className="text-2xl font-bold">Deals / Revenue</h1>
           <p className="text-white/40 text-sm mt-1">Track pipeline, invoicing, and payments.</p>
         </div>
-        <button onClick={() => setShowAdd(true)} className="rounded-xl bg-gold text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-gold-light">
+        <button onClick={() => setShowAdd(true)} className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-brand-light">
           + Add Deal
         </button>
       </div>
@@ -144,7 +144,7 @@ export default function Deals() {
                   <td className="px-4 py-3"><StatusBadge status={d.invoiceStatus} /></td>
                   <td className="px-4 py-3"><StatusBadge status={d.paymentStatus} /></td>
                   <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => setEditing(d)} className="text-xs text-gold hover:underline">Edit</button>
+                    <button onClick={() => setEditing(d)} className="text-xs text-brand hover:underline">Edit</button>
                     <button onClick={() => handleDelete(d.id)} className="text-xs text-red-400 hover:underline">Delete</button>
                   </td>
                 </tr>

@@ -30,7 +30,7 @@ function FollowUpCard({ f, onMarkDone, onReschedule, onAddLog, onMoveStatus }) {
           />
           <button
             onClick={() => { onReschedule(f.id, newDate); setRescheduling(false); }}
-            className="rounded-lg bg-gold text-charcoal-950 text-xs font-semibold px-2 py-1"
+            className="rounded-lg bg-brand text-charcoal-950 text-xs font-semibold px-2 py-1"
           >
             Save
           </button>
@@ -38,19 +38,19 @@ function FollowUpCard({ f, onMarkDone, onReschedule, onAddLog, onMoveStatus }) {
       ) : (
         <div className="flex flex-wrap gap-2 pt-1">
           {f.status === 'Pending' && (
-            <button onClick={() => onMarkDone(f.id)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-gold/40">
+            <button onClick={() => onMarkDone(f.id)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-brand/40">
               Mark Done
             </button>
           )}
           {f.status === 'Pending' && (
-            <button onClick={() => setRescheduling(true)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-gold/40">
+            <button onClick={() => setRescheduling(true)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-brand/40">
               Reschedule
             </button>
           )}
-          <button onClick={() => onAddLog(f)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-gold/40">
+          <button onClick={() => onAddLog(f)} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-brand/40">
             Add Outreach Log
           </button>
-          <button onClick={() => onMoveStatus(f.prospectId, 'Proposal Sent')} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-gold/40">
+          <button onClick={() => onMoveStatus(f.prospectId, 'Proposal Sent')} className="rounded-lg border border-white/15 px-2.5 py-1 text-xs hover:border-brand/40">
             → Proposal Sent
           </button>
           <button onClick={() => onMoveStatus(f.prospectId, 'Won')} className="rounded-lg border border-emerald-500/30 text-emerald-300 px-2.5 py-1 text-xs hover:bg-emerald-500/10">
@@ -159,11 +159,11 @@ export default function FollowUpBoard() {
               onChange={(e) => setLogText(e.target.value)}
               rows={4}
               placeholder="What did you send/discuss?"
-              className="w-full rounded-lg border border-white/10 bg-charcoal-800/60 px-3 py-2 text-sm text-white outline-none focus:border-gold/50"
+              className="w-full rounded-lg border border-white/10 bg-charcoal-800/60 px-3 py-2 text-sm text-white outline-none focus:border-brand/50"
             />
             <div className="flex justify-end gap-2">
               <button onClick={() => setQuickLogFor(null)} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs">Cancel</button>
-              <button onClick={submitQuickLog} className="rounded-lg bg-gold text-charcoal-950 font-semibold px-3 py-1.5 text-xs">Save Log</button>
+              <button onClick={submitQuickLog} className="rounded-lg bg-brand text-charcoal-950 font-semibold px-3 py-1.5 text-xs">Save Log</button>
             </div>
           </div>
         </div>

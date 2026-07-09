@@ -27,7 +27,7 @@ export function ToastProvider({ children }) {
             className={`rounded-xl px-4 py-3 text-sm font-medium shadow-glass backdrop-blur-md border animate-[fadeIn_0.2s_ease] ${
               t.type === 'error'
                 ? 'bg-red-950/80 border-red-800 text-red-200'
-                : 'bg-charcoal-800/90 border-gold/30 text-white'
+                : 'bg-charcoal-800/90 border-brand/30 text-white'
             }`}
           >
             {t.message}

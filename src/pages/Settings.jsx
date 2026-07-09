@@ -3,7 +3,7 @@ import { useData } from '../context/DataContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 
-const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-gold/50';
+const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-brand/50';
 
 export default function Settings() {
   const { settings, updateSettings, handleExport, handleImport } = useData();
@@ -78,7 +78,7 @@ export default function Settings() {
             className={inputClass}
           />
         </label>
-        <button onClick={saveSettings} className="rounded-xl bg-gold text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-gold-light">
+        <button onClick={saveSettings} className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-brand-light">
           Save Settings
         </button>
       </section>
@@ -87,10 +87,10 @@ export default function Settings() {
         <h2 className="font-semibold">Data Management</h2>
         <p className="text-xs text-white/40">Data lives in Supabase now — shared across every device you sign into. Export regularly as an offline backup.</p>
         <div className="flex flex-wrap gap-3">
-          <button onClick={exportToFile} className="rounded-xl border border-white/15 px-4 py-2 text-sm hover:border-gold/40">
+          <button onClick={exportToFile} className="rounded-xl border border-white/15 px-4 py-2 text-sm hover:border-brand/40">
             Export Data
           </button>
-          <button onClick={() => fileInputRef.current?.click()} className="rounded-xl border border-white/15 px-4 py-2 text-sm hover:border-gold/40">
+          <button onClick={() => fileInputRef.current?.click()} className="rounded-xl border border-white/15 px-4 py-2 text-sm hover:border-brand/40">
             Import Data
           </button>
           <input ref={fileInputRef} type="file" accept="application/json" onChange={onFileSelected} className="hidden" />

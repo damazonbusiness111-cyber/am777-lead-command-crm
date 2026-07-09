@@ -12,7 +12,7 @@ export default function Drawer({ open, onClose, title, children }) {
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 sticky top-0 bg-charcoal-900/95 backdrop-blur-md z-10">
           <h2 className="text-lg font-semibold text-white">{title}</h2>
-          <button onClick={onClose} className="text-white/50 hover:text-gold transition-colors text-xl leading-none px-2">
+          <button onClick={onClose} className="text-white/50 hover:text-brand transition-colors text-xl leading-none px-2">
             ×
           </button>
         </div>

@@ -12,14 +12,14 @@ html, body, #root {
 }
 
 body {
-  background-color: #0a0a0a;
+  background-color: #0a0e16;
   color: #ffffff;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(212, 175, 55, 0.3) transparent;
+  scrollbar-color: rgba(69, 157, 251, 0.3) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -28,6 +28,6 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgba(212, 175, 55, 0.3);
+  background-color: rgba(69, 157, 251, 0.3);
   border-radius: 999px;
 }

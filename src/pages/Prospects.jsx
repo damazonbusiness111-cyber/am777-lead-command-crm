@@ -30,7 +30,7 @@ function Field({ label, children }) {
   );
 }
 
-const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-gold/50';
+const inputClass = 'mt-1 w-full rounded-xl border border-white/10 bg-charcoal-800/60 px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-brand/50';
 
 function ProspectForm({ initial, onSubmit, onCancel }) {
   const [form, setForm] = useState(initial || EMPTY_PROSPECT);
@@ -97,7 +97,7 @@ function ProspectForm({ initial, onSubmit, onCancel }) {
       </Field>
       <div className="flex justify-end gap-3 pt-2">
         <button type="button" onClick={onCancel} className="rounded-xl border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-white/30">Cancel</button>
-        <button type="submit" className="rounded-xl bg-gold text-charcoal-950 font-semibold px-4 py-2 text-sm hover:bg-gold-light">Save Prospect</button>
+        <button type="submit" className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2 text-sm hover:bg-brand-light">Save Prospect</button>
       </div>
     </form>
   );
@@ -170,13 +170,13 @@ function ProspectDetail({ prospect, onClose }) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <button onClick={() => setShowLogForm((v) => !v)} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-gold/40">
+        <button onClick={() => setShowLogForm((v) => !v)} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-brand/40">
           + Outreach Log
         </button>
-        <button onClick={handleAddFollowUp} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-gold/40">
+        <button onClick={handleAddFollowUp} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-brand/40">
           + Follow-Up Task
         </button>
-        <button onClick={handleCreateDeal} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-gold/40">
+        <button onClick={handleCreateDeal} className="rounded-lg border border-white/15 px-3 py-1.5 text-xs text-white/80 hover:border-brand/40">
           + Create Deal
         </button>
       </div>
@@ -197,7 +197,7 @@ function ProspectDetail({ prospect, onClose }) {
           <Field label="Outcome">
             <input value={logForm.outcome} onChange={(e) => setLogForm((p) => ({ ...p, outcome: e.target.value }))} className={inputClass} />
           </Field>
-          <button type="submit" className="rounded-lg bg-gold text-charcoal-950 font-semibold px-3 py-1.5 text-xs">Save Log</button>
+          <button type="submit" className="rounded-lg bg-brand text-charcoal-950 font-semibold px-3 py-1.5 text-xs">Save Log</button>
         </form>
       )}
 
@@ -281,7 +281,7 @@ export default function Prospects() {
           <h1 className="text-2xl font-bold">Prospects CRM</h1>
           <p className="text-white/40 text-sm mt-1">{prospects.length} total prospects</p>
         </div>
-        <button onClick={() => setShowAddModal(true)} className="rounded-xl bg-gold text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-gold-light">
+        <button onClick={() => setShowAddModal(true)} className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-brand-light">
           + Add Prospect
         </button>
       </div>
@@ -321,7 +321,7 @@ export default function Prospects() {
                   <td className="px-4 py-3"><PriorityBadge priority={p.priority} /></td>
                   <td className="px-4 py-3 text-white/60">{formatDate(p.nextFollowUpDate)}</td>
                   <td className="px-4 py-3 text-right space-x-2" onClick={(e) => e.stopPropagation()}>
-                    <button onClick={() => setEditingProspect(p)} className="text-xs text-gold hover:underline">Edit</button>
+                    <button onClick={() => setEditingProspect(p)} className="text-xs text-brand hover:underline">Edit</button>
                     <button onClick={() => handleDelete(p.id)} className="text-xs text-red-400 hover:underline">Delete</button>
                   </td>
                 </tr>
