@@ -148,7 +148,7 @@ function ApiKeysSection() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={k.is_active ? 'Won' : 'Lost'} /> <span className="sr-only">{k.is_active ? 'Active' : 'Revoked'}</span>
+                    <StatusBadge status={k.is_active ? 'Active' : 'Revoked'} />
                   </td>
                   <td className="px-4 py-3 text-white/50 text-xs">{k.last_used_at ? new Date(k.last_used_at).toLocaleString() : 'Never'}</td>
                   <td className="px-4 py-3 text-right">
@@ -347,8 +347,8 @@ function WebhookSubscriptionsSection() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <button onClick={() => handleToggleActive(s)} className="cursor-pointer">
-                      <StatusBadge status={s.is_active ? 'Won' : 'Skipped'} />
+                    <button onClick={() => handleToggleActive(s)} className="cursor-pointer" title="Click to toggle">
+                      <StatusBadge status={s.is_active ? 'Active' : 'Disabled'} />
                     </button>
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -457,7 +457,7 @@ function IntegrationLogsSection() {
                   <td className="px-4 py-3 text-white/60">{l.integration_type}</td>
                   <td className="px-4 py-3 text-white/60">{l.event_type || '—'}</td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={l.status === 'processed' || l.status === 'ok' ? 'Won' : l.status === 'failed' ? 'Lost' : l.status} />
+                    <StatusBadge status={l.status ? l.status.charAt(0).toUpperCase() + l.status.slice(1) : l.status} />
                   </td>
                   <td className="px-4 py-3 text-white/50 text-xs whitespace-nowrap">{new Date(l.created_at).toLocaleString()}</td>
                   <td className="px-4 py-3 text-white/40 text-xs max-w-xs">
