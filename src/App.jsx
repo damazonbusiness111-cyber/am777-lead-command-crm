@@ -12,6 +12,7 @@ import FollowUpBoard from './pages/FollowUpBoard';
 import Deals from './pages/Deals';
 import DailyCommand from './pages/DailyCommand';
 import Settings from './pages/Settings';
+import IntegrationCenter from './pages/IntegrationCenter';
 
 function AuthGate() {
   const { session, loading } = useAuth();
@@ -39,6 +40,7 @@ function AuthGate() {
             <Route path="/deals" element={<Deals />} />
             <Route path="/daily" element={<DailyCommand />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/integrations" element={<IntegrationCenter />} />
           </Routes>
         </Layout>
       </HashRouter>

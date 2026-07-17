@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { to: '/follow-ups', label: 'Follow-Up Board', icon: '⏱' },
   { to: '/deals', label: 'Deals / Revenue', icon: '₱' },
   { to: '/daily', label: 'Daily Command', icon: '☰' },
+  { to: '/integrations', label: 'Integration Center', icon: '⇄' },
   { to: '/settings', label: 'Settings', icon: '⚙' }
 ];
 

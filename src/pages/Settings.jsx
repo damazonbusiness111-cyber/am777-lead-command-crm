@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -9,6 +10,7 @@ export default function Settings() {
   const { settings, updateSettings, handleExport, handleImport } = useData();
   const { showToast } = useToast();
   const { session, signOut } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState(settings);
   const fileInputRef = useRef(null);
 
@@ -69,17 +71,16 @@ export default function Settings() {
           <span className="text-xs text-white/50">Default Currency</span>
           <input value={form.defaultCurrency} onChange={(e) => set('defaultCurrency', e.target.value)} className={inputClass} />
         </label>
-        <label className="block">
-          <span className="text-xs text-white/50">n8n Webhook URL (placeholder for later automation)</span>
-          <input
-            value={form.n8nWebhookUrl}
-            onChange={(e) => set('n8nWebhookUrl', e.target.value)}
-            placeholder="https://your-n8n-instance/webhook/..."
-            className={inputClass}
-          />
-        </label>
         <button onClick={saveSettings} className="rounded-xl bg-brand text-charcoal-950 font-semibold px-4 py-2.5 text-sm hover:bg-brand-light">
           Save Settings
+        </button>
+      </section>
+
+      <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5 space-y-3">
+        <h2 className="font-semibold">Integrations</h2>
+        <p className="text-xs text-white/40">Manage API keys, webhooks, and connect n8n, Zapier, Make, and other tools from the Integration Center.</p>
+        <button onClick={() => navigate('/integrations')} className="rounded-xl border border-white/15 px-4 py-2 text-sm hover:border-brand/40">
+          Open Integration Center →
         </button>
       </section>
 
