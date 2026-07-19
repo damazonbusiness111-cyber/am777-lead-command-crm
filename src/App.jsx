@@ -4,6 +4,7 @@ import { ToastProvider } from './context/ToastContext';
 import { DataProvider } from './context/DataContext';
 import AppShell from './components/layout/AppShell';
 import Login from './pages/Login';
+import ResetPasswordScreen from './pages/ResetPasswordScreen';
 import Dashboard from './pages/Dashboard';
 import Leads from './pages/Leads';
 import Pipeline from './pages/Pipeline';
@@ -13,7 +14,7 @@ import Integrations from './pages/Integrations';
 import Settings from './pages/Settings';
 
 function AuthGate() {
-  const { session, loading } = useAuth();
+  const { session, loading, recoveryMode } = useAuth();
 
   if (loading) {
     return (
@@ -22,6 +23,11 @@ function AuthGate() {
       </div>
     );
   }
+
+  // Recovery takes priority even though signing in via the reset link creates a
+  // session — otherwise the user would land straight in the CRM instead of being
+  // asked to set a new password.
+  if (recoveryMode) return <ResetPasswordScreen />;
 
   if (!session) return <Login />;
 
