@@ -1,196 +1,134 @@
-import { lazy, Suspense } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { isOverdue, isDueToday, formatDate, formatDateTime } from '../lib/dateUtils';
+import { useToast } from '../context/ToastContext';
+import { isOverdue, isDueToday, formatDate } from '../lib/dateUtils';
 import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
+import PriorityActions from '../components/dashboard/PriorityActions';
+import PipelineSnapshot from '../components/dashboard/PipelineSnapshot';
+import RecentLeads from '../components/dashboard/RecentLeads';
+import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 
-const PipelineChart = lazy(() => import('../components/charts/PipelineChart'));
-const RevenueChart = lazy(() => import('../components/charts/RevenueChart'));
-
-function ChartFallback() {
-  return <div className="h-64 flex items-center justify-center text-sm text-white/30">Loading chart...</div>;
-}
+const HOT_STATUSES = ['Qualified', 'Booked Call', 'Proposal Sent', 'Decision Pending'];
 
 export default function Dashboard() {
-  const { prospects, outreachLogs, followups, deals, settings } = useData();
-
-  const totalLeads = prospects.length;
-  const newLeads = prospects.filter((p) => p.status === 'New').length;
-  const contacted = prospects.filter((p) => p.status === 'Contacted').length;
-  const dueToday = followups.filter((f) => isDueToday(f.dueDate, f.status)).length;
-  const overdue = followups.filter((f) => isOverdue(f.dueDate, f.status)).length;
-  const bookedCalls = prospects.filter((p) => p.status === 'Booked Call').length;
-  const proposalSent = prospects.filter((p) => p.status === 'Proposal Sent').length;
-  const wonDeals = deals.filter((d) => d.dealStatus === 'Won' || d.dealStatus === 'Paid').length;
-  const pipelineValue = deals
-    .filter((d) => !['Lost'].includes(d.dealStatus))
-    .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
-  const paidRevenue = deals
-    .filter((d) => d.paymentStatus === 'Paid')
-    .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
-  const wonRevenue = deals
-    .filter((d) => d.dealStatus === 'Won' || d.dealStatus === 'Paid')
-    .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
-  const unpaidRevenue = deals
-    .filter((d) => d.paymentStatus !== 'Paid')
-    .reduce((sum, d) => sum + (Number(d.amount) || 0), 0);
+  const { prospects, followups, deals, settings, addOutreachLog, markFollowUpDone } = useData();
+  const { showToast } = useToast();
+  const [composer, setComposer] = useState({ lead: null, templateKey: null });
 
   const currency = settings.defaultCurrency || 'PHP';
-  const money = (n) => `${currency} ${n.toLocaleString()}`;
+  const leadsById = useMemo(() => Object.fromEntries(prospects.map((p) => [p.id, p])), [prospects]);
+  const dealsByProspectId = useMemo(() => {
+    const map = {};
+    deals.forEach((d) => { if (d.prospectId) map[d.prospectId] = d; });
+    return map;
+  }, [deals]);
 
-  const todaysFollowUps = followups
-    .filter((f) => (isDueToday(f.dueDate, f.status) || isOverdue(f.dueDate, f.status)))
-    .sort((a, b) => a.dueDate.localeCompare(b.dueDate))
-    .slice(0, 6);
+  const newLeadsCount = useMemo(() => prospects.filter((p) => p.status === 'New').length, [prospects]);
+  const followUpsTodayCount = useMemo(() => followups.filter((f) => isDueToday(f.dueDate, f.status)).length, [followups]);
+  const hotOpportunitiesCount = useMemo(() => prospects.filter((p) => HOT_STATUSES.includes(p.status)).length, [prospects]);
+  const expectedRevenue = useMemo(() => deals.filter((d) => d.dealStatus !== 'Lost').reduce((s, d) => s + (Number(d.amount) || 0), 0), [deals]);
 
-  const hotProspects = [...prospects]
-    .filter((p) => ['Qualified', 'Booked Call', 'Proposal Sent'].includes(p.status))
-    .sort((a, b) => (b.leadScore || 0) - (a.leadScore || 0))
-    .slice(0, 5);
+  const priorityItems = useMemo(() => {
+    const overdue = followups.filter((f) => isOverdue(f.dueDate, f.status));
+    const today = followups.filter((f) => isDueToday(f.dueDate, f.status));
+    return [...overdue, ...today]
+      .map((followUp) => ({ followUp, lead: leadsById[followUp.prospectId] }))
+      .filter((item) => item.lead)
+      .slice(0, 8);
+  }, [followups, leadsById]);
 
-  const recentOutreach = [...outreachLogs]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
+  const recentLeads = useMemo(() => [...prospects].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5), [prospects]);
+  const followUpQueue = useMemo(() => followups.filter((f) => f.status === 'Pending').sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || '')).slice(0, 5), [followups]);
+  const recentRevenue = useMemo(() => [...deals].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)).slice(0, 5), [deals]);
 
-  const recentDeals = [...deals]
-    .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
-    .slice(0, 5);
+  function handleMarkSentComplete({ lead }) {
+    addOutreachLog({
+      prospectId: lead.id,
+      companyName: lead.companyName,
+      channel: 'Email',
+      direction: 'Sent',
+      messageSummary: 'Gmail draft sent',
+      messageBody: '',
+      outcome: '',
+      nextAction: ''
+    });
+    const openFollowUp = followups.find((f) => f.prospectId === lead.id && f.status === 'Pending');
+    if (openFollowUp) markFollowUpDone(openFollowUp.id);
+    showToast('Logged as sent and follow-up completed');
+  }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-        <p className="text-white/40 text-sm mt-1">{settings.brandName} — command center overview</p>
+        <h1 className="text-2xl font-bold text-ink">Dashboard</h1>
+        <p className="text-ink-soft text-sm mt-1">Daily command center</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <MetricCard label="Total Leads" value={totalLeads} />
-        <MetricCard label="New Leads" value={newLeads} />
-        <MetricCard label="Contacted" value={contacted} />
-        <MetricCard label="Follow-Up Due Today" value={dueToday} accent={dueToday > 0} />
-        <MetricCard label="Overdue Follow-Ups" value={overdue} accent={overdue > 0} />
-        <MetricCard label="Booked Calls" value={bookedCalls} />
-        <MetricCard label="Proposal Sent" value={proposalSent} />
-        <MetricCard label="Won Deals" value={wonDeals} />
-        <MetricCard label="Pipeline Value" value={money(pipelineValue)} accent />
-        <MetricCard label="Paid Revenue" value={money(paidRevenue)} accent />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard label="New Leads" value={newLeadsCount} accent />
+        <MetricCard label="Follow-ups Today" value={followUpsTodayCount} accent />
+        <MetricCard label="Hot Opportunities" value={hotOpportunitiesCount} />
+        <MetricCard label="Expected Revenue" value={`${currency} ${expectedRevenue.toLocaleString()}`} />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-          <h2 className="font-semibold mb-1">Pipeline by Status</h2>
-          <p className="text-xs text-white/40 mb-2">Where every prospect currently sits.</p>
-          <Suspense fallback={<ChartFallback />}>
-            <PipelineChart prospects={prospects} />
-          </Suspense>
-        </section>
-
-        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-          <h2 className="font-semibold mb-1">Revenue Breakdown</h2>
-          <p className="text-xs text-white/40 mb-2">Pipeline vs. won vs. collected.</p>
-          <Suspense fallback={<ChartFallback />}>
-            <RevenueChart
-              pipelineValue={pipelineValue}
-              wonRevenue={wonRevenue}
-              paidRevenue={paidRevenue}
-              unpaidRevenue={unpaidRevenue}
-              currency={currency}
-            />
-          </Suspense>
-        </section>
+      <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-4">
+        <h2 className="font-semibold text-ink">Priority Actions</h2>
+        <PriorityActions items={priorityItems} onAction={(lead, templateKey) => setComposer({ lead, templateKey })} />
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Today's Follow-Ups</h2>
-            <Link to="/follow-ups" className="text-xs text-brand hover:underline">View board →</Link>
+      <PipelineSnapshot prospects={prospects} dealsByProspectId={dealsByProspectId} currency={currency} />
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        <RecentLeads leads={recentLeads} />
+
+        <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-ink">Follow-up Queue</h2>
+            <Link to="/follow-ups" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
-          {todaysFollowUps.length === 0 ? (
-            <EmptyState title="Nothing due today" subtitle="You're all caught up." />
-          ) : (
+          {followUpQueue.length === 0 ? <EmptyState title="Queue is clear" /> : (
             <ul className="space-y-2">
-              {todaysFollowUps.map((f) => (
-                <li key={f.id} className="flex items-center justify-between rounded-xl bg-charcoal-700/40 px-3 py-2.5">
-                  <div>
-                    <p className="text-sm font-medium">{f.companyName}</p>
-                    <p className="text-xs text-white/40">{f.taskType} · due {formatDate(f.dueDate)}</p>
-                  </div>
-                  <StatusBadge status={isOverdue(f.dueDate, f.status) ? 'Pending' : f.status} />
+              {followUpQueue.map((f) => (
+                <li key={f.id} className="flex items-center justify-between text-sm">
+                  <span className="text-ink truncate">{f.companyName}</span>
+                  <span className="text-xs text-ink-soft shrink-0">{formatDate(f.dueDate)}</span>
                 </li>
               ))}
             </ul>
           )}
-        </section>
+        </div>
 
-        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Hot Prospects</h2>
-            <Link to="/prospects" className="text-xs text-brand hover:underline">View all →</Link>
+        <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-ink">Recent Revenue</h2>
+            <Link to="/revenue" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
-          {hotProspects.length === 0 ? (
-            <EmptyState title="No hot prospects yet" subtitle="Qualify or book calls to see them here." />
-          ) : (
+          {recentRevenue.length === 0 ? <EmptyState title="No deals yet" /> : (
             <ul className="space-y-2">
-              {hotProspects.map((p) => (
-                <li key={p.id} className="flex items-center justify-between rounded-xl bg-charcoal-700/40 px-3 py-2.5">
-                  <div>
-                    <p className="text-sm font-medium">{p.companyName}</p>
-                    <p className="text-xs text-white/40">{p.niche}</p>
+              {recentRevenue.map((d) => (
+                <li key={d.id} className="flex items-center justify-between text-sm">
+                  <span className="text-ink truncate">{d.companyName}</span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <StatusBadge status={d.dealStatus} />
+                    <span className="text-xs text-ink-soft">{d.currency} {Number(d.amount || 0).toLocaleString()}</span>
                   </div>
-                  <StatusBadge status={p.status} />
                 </li>
               ))}
             </ul>
           )}
-        </section>
-
-        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Recent Outreach</h2>
-            <Link to="/outreach" className="text-xs text-brand hover:underline">View all →</Link>
-          </div>
-          {recentOutreach.length === 0 ? (
-            <EmptyState title="No outreach logged yet" />
-          ) : (
-            <ul className="space-y-2">
-              {recentOutreach.map((l) => (
-                <li key={l.id} className="rounded-xl bg-charcoal-700/40 px-3 py-2.5">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{l.companyName}</p>
-                    <span className="text-xs text-white/40">{formatDateTime(l.createdAt)}</span>
-                  </div>
-                  <p className="text-xs text-white/40 mt-0.5">{l.channel} · {l.direction}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section className="rounded-2xl border border-white/10 bg-charcoal-800/50 p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold">Recent Deals</h2>
-            <Link to="/deals" className="text-xs text-brand hover:underline">View all →</Link>
-          </div>
-          {recentDeals.length === 0 ? (
-            <EmptyState title="No deals yet" />
-          ) : (
-            <ul className="space-y-2">
-              {recentDeals.map((d) => (
-                <li key={d.id} className="flex items-center justify-between rounded-xl bg-charcoal-700/40 px-3 py-2.5">
-                  <div>
-                    <p className="text-sm font-medium">{d.companyName}</p>
-                    <p className="text-xs text-white/40">{d.serviceName || 'Service TBD'} · {money(Number(d.amount) || 0)}</p>
-                  </div>
-                  <StatusBadge status={d.dealStatus} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
+        </div>
       </div>
+
+      <EmailComposerDrawer
+        open={!!composer.lead}
+        onClose={() => setComposer({ lead: null, templateKey: null })}
+        lead={composer.lead}
+        initialTemplateKey={composer.templateKey}
+        onMarkSentComplete={handleMarkSentComplete}
+      />
     </div>
   );
 }
