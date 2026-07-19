@@ -1,8 +1,8 @@
 <svg width="64" height="64" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AM777 favicon">
-  <rect width="512" height="512" rx="112" fill="#071A3D"/>
-  <g fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M100 340 L192 150 L260 290"/>
-    <path d="M176 340 L266 150 L332 290 L398 150 L410 340"/>
+  <rect width="512" height="512" rx="116" fill="#071A3D"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="34" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M112 342 L198 156 L256 274"/>
+    <path d="M186 342 L262 156 L326 286 L390 156 L400 342"/>
   </g>
-  <path d="M230 340 L266 262 L302 340 Z" fill="#1F5EFF"/>
+  <path d="M228 342 L262 264 L296 342 Z" fill="#1F5EFF"/>
 </svg>
