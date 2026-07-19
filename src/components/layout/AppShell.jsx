@@ -1,10 +1,16 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
-import MobileNavigation from './MobileNavigation';
+import MobileTabBar from './MobileTabBar';
+import MoreSheet from './MoreSheet';
+
+const MORE_PATHS = ['/revenue', '/integrations', '/settings'];
 
 export default function AppShell({ children }) {
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const location = useLocation();
+  const moreActive = MORE_PATHS.some((p) => location.pathname.startsWith(p));
 
   return (
     <div className="min-h-screen bg-surface-page text-ink flex">
@@ -13,13 +19,14 @@ export default function AppShell({ children }) {
       </aside>
 
       <div className="flex-1 min-w-0 flex flex-col">
-        <TopBar onOpenMobileNav={() => setMobileNavOpen(true)} />
-        <main className="flex-1 min-w-0 px-4 py-6 lg:px-8 lg:py-8 overflow-x-hidden">
+        <TopBar />
+        <main className="flex-1 min-w-0 px-4 py-6 lg:px-8 lg:py-8 pb-24 lg:pb-8 overflow-x-hidden">
           <div className="max-w-6xl mx-auto">{children}</div>
         </main>
       </div>
 
-      <MobileNavigation open={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
+      <MobileTabBar onOpenMore={() => setMoreOpen(true)} moreActive={moreActive} />
+      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
     </div>
   );
 }

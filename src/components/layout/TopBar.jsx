@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { GMAIL_STATUS_SHORT, GMAIL_API_CONNECTED } from '../../lib/gmailStatus';
 
-export default function TopBar({ onOpenMobileNav }) {
+export default function TopBar() {
   const navigate = useNavigate();
   const { session, signOut } = useAuth();
   const [query, setQuery] = useState('');
@@ -24,17 +24,7 @@ export default function TopBar({ onOpenMobileNav }) {
   }
 
   return (
-    <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface-card/95 backdrop-blur px-4 py-3 lg:px-6">
-      <button
-        onClick={onOpenMobileNav}
-        aria-label="Open navigation menu"
-        className="lg:hidden inline-flex items-center justify-center min-w-[44px] min-h-[44px] rounded-lg border border-line text-ink-soft"
-      >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-        </svg>
-      </button>
-
+    <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface-card/80 backdrop-blur-xl pt-safe-t px-4 py-3 lg:px-6">
       <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md">
         <input
           value={query}
