@@ -268,6 +268,12 @@ export function DataProvider({ children }) {
     setFollowups((prev) => prev.map((f) => (f.id === id ? { ...f, dueDate: newDueDate } : f)));
   }
 
+  async function updateFollowUpNotes(id, notes) {
+    const { error } = await supabase.from('followups').update({ notes }).eq('id', id);
+    if (error) { reportError('Update follow-up note', error); return; }
+    setFollowups((prev) => prev.map((f) => (f.id === id ? { ...f, notes } : f)));
+  }
+
   async function deleteFollowUp(id) {
     const { error } = await supabase.from('followups').delete().eq('id', id);
     if (error) { reportError('Delete follow-up', error); return; }
@@ -369,7 +375,7 @@ export function DataProvider({ children }) {
       prospects, outreachLogs, followups, deals, settings, templates,
       addProspect, updateProspect, deleteProspect, updateProspectStatus, searchProspects,
       addOutreachLog, getOutreachLogsByProspect,
-      addFollowUp, markFollowUpDone, skipFollowUp, rescheduleFollowUp, deleteFollowUp,
+      addFollowUp, markFollowUpDone, skipFollowUp, rescheduleFollowUp, updateFollowUpNotes, deleteFollowUp,
       addDeal, updateDeal, deleteDeal,
       saveLeadTemplate, deleteLeadTemplate,
       updateSettings, handleExport, handleImport
