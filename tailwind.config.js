@@ -44,6 +44,14 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif']
+      },
+      transitionTimingFunction: {
+        // iOS's standard sheet/navigation curve.
+        ios: 'cubic-bezier(0.32, 0.72, 0, 1)'
+      },
+      spacing: {
+        'safe-b': 'env(safe-area-inset-bottom)',
+        'safe-t': 'env(safe-area-inset-top)'
       }
     }
   },

@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext';
 import { isOverdue, isDueToday, isDueThisWeek } from '../lib/dateUtils';
 import FollowUpQueue from '../components/followups/FollowUpQueue';
 import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
+import SegmentedControl from '../components/ui/SegmentedControl';
 
 const TABS = ['Today', 'Overdue', 'Upcoming', 'Completed'];
 
@@ -69,19 +70,12 @@ export default function FollowUps() {
         <p className="text-ink-soft text-sm mt-1">Your primary daily workspace — clear these first.</p>
       </div>
 
-      <div className="flex gap-2 border-b border-line overflow-x-auto">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px min-h-[44px] whitespace-nowrap ${
-              tab === t ? 'border-brand text-brand' : 'border-transparent text-ink-soft hover:text-ink'
-            }`}
-          >
-            {t} ({countByTab[t]})
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        options={TABS}
+        value={tab}
+        onChange={setTab}
+        getLabel={(t) => `${t} (${countByTab[t]})`}
+      />
 
       <FollowUpQueue items={itemsByTab[tab]} leadsById={leadsById} handlers={handlers} />
 

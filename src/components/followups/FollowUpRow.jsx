@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import StatusBadge from '../ui/StatusBadge';
+import SwipeableRow from '../ui/SwipeableRow';
 import { formatDate } from '../../lib/dateUtils';
 import { suggestActionForLead } from '../../lib/emailTemplates';
 
@@ -25,7 +26,13 @@ export default function FollowUpRow({ followUp, lead, onPrimaryAction, onMarkDon
   const action = lead ? suggestActionForLead(lead, { unpaidWon }) : { label: 'Review Lead' };
   const isCompleted = followUp.status !== 'Pending';
 
+  const swipeActions = isCompleted ? [] : [
+    { label: 'Done', onClick: () => onMarkDone(followUp.id), className: 'bg-success' },
+    { label: 'Skip', onClick: () => onSkip(followUp.id), className: 'bg-danger' }
+  ];
+
   return (
+    <SwipeableRow actions={swipeActions}>
     <div className="rounded-xl border border-line bg-surface-card p-4 space-y-2">
       <div className="flex items-center justify-between gap-2">
         <div>
@@ -95,5 +102,6 @@ export default function FollowUpRow({ followUp, lead, onPrimaryAction, onMarkDon
         </div>
       )}
     </div>
+    </SwipeableRow>
   );
 }

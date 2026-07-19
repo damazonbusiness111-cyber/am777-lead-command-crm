@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { GMAIL_STATUS_LABEL } from '../lib/gmailStatus';
 import { EMAIL_TEMPLATE_KEYS, buildEmailFromTemplate } from '../lib/emailTemplates';
+import SegmentedControl from '../components/ui/SegmentedControl';
 
 const TABS = ['General', 'Email', 'Automation', 'Templates', 'Data', 'Advanced'];
 const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px-3 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
@@ -61,19 +62,7 @@ export default function Settings() {
         <p className="text-ink-soft text-sm mt-1">Configure your AM777 command center.</p>
       </div>
 
-      <div className="flex gap-2 border-b border-line overflow-x-auto">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px min-h-[44px] whitespace-nowrap ${
-              tab === t ? 'border-brand text-brand' : 'border-transparent text-ink-soft hover:text-ink'
-            }`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl options={TABS} value={tab} onChange={setTab} />
 
       {tab === 'General' && (
         <section className="rounded-2xl border border-line bg-surface-card p-5 space-y-4">
