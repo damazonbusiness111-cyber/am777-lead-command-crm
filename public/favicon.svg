@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AM777 favicon">
+  <rect width="512" height="512" rx="112" fill="#071A3D"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M100 340 L192 150 L260 290"/>
+    <path d="M176 340 L266 150 L332 290 L398 150 L410 340"/>
+  </g>
+  <path d="M230 340 L266 262 L302 340 Z" fill="#1F5EFF"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg width="640" height="160" viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AM777 CRM">
+  <rect x="8" y="8" width="144" height="144" rx="32" fill="#071A3D"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M38 108 L80 46 L112 92"/>
+    <path d="M72 108 L114 46 L146 92 L122 92"/>
+  </g>
+  <path d="M96 108 L114 78 L132 108 Z" fill="#1F5EFF"/>
+
+  <text x="182" y="78" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="52" fill="#071A3D" letter-spacing="-1">AM</text>
+  <text x="182" y="128" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="30" fill="#63708A" letter-spacing="4">CRM</text>
+  <text x="270" y="78" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="52" fill="#1F5EFF" letter-spacing="-1">777</text>
+</svg>
