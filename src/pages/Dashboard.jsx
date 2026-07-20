@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useToast } from '../context/ToastContext';
 import { isOverdue, isDueToday, formatDate } from '../lib/dateUtils';
 import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -14,9 +13,8 @@ import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 const HOT_STATUSES = ['Qualified', 'Booked Call', 'Proposal Sent', 'Decision Pending'];
 
 export default function Dashboard() {
-  const { prospects, followups, deals, settings, addOutreachLog, markFollowUpDone } = useData();
-  const { showToast } = useToast();
-  const [composer, setComposer] = useState({ lead: null, templateKey: null });
+  const { prospects, followups, deals, settings } = useData();
+  const [composer, setComposer] = useState({ lead: null, templateKey: null, followUpId: null });
 
   const currency = settings.defaultCurrency || 'PHP';
   const leadsById = useMemo(() => Object.fromEntries(prospects.map((p) => [p.id, p])), [prospects]);
@@ -44,22 +42,6 @@ export default function Dashboard() {
   const followUpQueue = useMemo(() => followups.filter((f) => f.status === 'Pending').sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || '')).slice(0, 5), [followups]);
   const recentRevenue = useMemo(() => [...deals].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)).slice(0, 5), [deals]);
 
-  function handleMarkSentComplete({ lead }) {
-    addOutreachLog({
-      prospectId: lead.id,
-      companyName: lead.companyName,
-      channel: 'Email',
-      direction: 'Sent',
-      messageSummary: 'Gmail draft sent',
-      messageBody: '',
-      outcome: '',
-      nextAction: ''
-    });
-    const openFollowUp = followups.find((f) => f.prospectId === lead.id && f.status === 'Pending');
-    if (openFollowUp) markFollowUpDone(openFollowUp.id);
-    showToast('Logged as sent and follow-up completed');
-  }
-
   return (
     <div className="space-y-6">
       <div>
@@ -76,7 +58,7 @@ export default function Dashboard() {
 
       <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-4">
         <h2 className="font-semibold text-ink">Priority Actions</h2>
-        <PriorityActions items={priorityItems} onAction={(lead, templateKey) => setComposer({ lead, templateKey })} />
+        <PriorityActions items={priorityItems} onAction={(lead, templateKey, followUpId) => setComposer({ lead, templateKey, followUpId })} />
       </div>
 
       <PipelineSnapshot prospects={prospects} dealsByProspectId={dealsByProspectId} currency={currency} />
@@ -124,10 +106,10 @@ export default function Dashboard() {
 
       <EmailComposerDrawer
         open={!!composer.lead}
-        onClose={() => setComposer({ lead: null, templateKey: null })}
+        onClose={() => setComposer({ lead: null, templateKey: null, followUpId: null })}
         lead={composer.lead}
+        followUpId={composer.followUpId}
         initialTemplateKey={composer.templateKey}
-        onMarkSentComplete={handleMarkSentComplete}
       />
     </div>
   );

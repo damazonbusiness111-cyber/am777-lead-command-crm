@@ -3,7 +3,18 @@ import IntegrationGrid from '../components/integrations/IntegrationGrid';
 import IntegrationSetupDrawer from '../components/integrations/IntegrationSetupDrawer';
 import AdvancedIntegrationTools from '../components/integrations/AdvancedIntegrationTools';
 import { listApiKeys, listWebhookSubscriptions } from '../lib/integrationApi';
-import { GMAIL_STATUS_SHORT } from '../lib/gmailStatus';
+import { computeIntegrationStatuses } from '../lib/integrationStatus';
+
+const INTEGRATION_META = [
+  { key: 'gmail', name: 'Gmail', iconName: 'mail', benefit: 'Prepare and send relevant CRM follow-ups.' },
+  { key: 'website', name: 'Website Forms', iconName: 'globe', benefit: 'Send new leads straight from your site into the CRM.' },
+  { key: 'n8n', name: 'n8n', iconName: 'automation', benefit: 'Automate lead intake and follow-up workflows.' },
+  { key: 'make', name: 'Make / Zapier', iconName: 'link', benefit: 'Connect the CRM to thousands of other apps.' },
+  { key: 'api', name: 'Custom API', iconName: 'code', benefit: 'Build your own integration against the CRM API.' },
+  { key: 'webhooks', name: 'Webhooks', iconName: 'webhook', benefit: 'Get notified the moment CRM data changes.' },
+  { key: 'sheets', name: 'Google Sheets', iconName: 'table', benefit: 'Push new rows into the CRM automatically.' },
+  { key: 'gcal', name: 'Google Calendar', iconName: 'calendar', benefit: 'Sync booked calls into your pipeline.' }
+];
 
 export default function Integrations() {
   const [hasActiveApiKey, setHasActiveApiKey] = useState(false);
@@ -16,20 +27,8 @@ export default function Integrations() {
     listWebhookSubscriptions().then((subs) => setHasActiveWebhook(subs.some((s) => s.is_active))).catch(() => {});
   }, []);
 
-  // Only "Connected" when we can verify it ourselves (an active key/subscription exists).
-  // Everything else stays honest about needing setup — never inferred.
-  const apiBackedStatus = hasActiveApiKey ? 'Connected' : 'Ready to Configure';
-
-  const integrations = [
-    { key: 'gmail', name: 'Gmail', icon: '✉', benefit: 'Prepare and send relevant CRM follow-ups.', status: GMAIL_STATUS_SHORT },
-    { key: 'website', name: 'Website Forms', icon: '🌐', benefit: 'Send new leads straight from your site into the CRM.', status: apiBackedStatus },
-    { key: 'n8n', name: 'n8n', icon: '⚙', benefit: 'Automate lead intake and follow-up workflows.', status: apiBackedStatus },
-    { key: 'make', name: 'Make / Zapier', icon: '🔗', benefit: 'Connect the CRM to thousands of other apps.', status: apiBackedStatus },
-    { key: 'api', name: 'Custom API', icon: '</>', benefit: 'Build your own integration against the CRM API.', status: apiBackedStatus },
-    { key: 'webhooks', name: 'Webhooks', icon: '📡', benefit: 'Get notified the moment CRM data changes.', status: hasActiveWebhook ? 'Connected' : 'Ready to Configure' },
-    { key: 'sheets', name: 'Google Sheets', icon: '▦', benefit: 'Push new rows into the CRM automatically.', status: apiBackedStatus },
-    { key: 'gcal', name: 'Google Calendar', icon: '📅', benefit: 'Sync booked calls into your pipeline.', status: 'Unavailable' }
-  ];
+  const statuses = computeIntegrationStatuses({ hasActiveApiKey, hasActiveWebhook });
+  const integrations = INTEGRATION_META.map((i) => ({ ...i, status: statuses[i.key] }));
 
   return (
     <div className="space-y-6">

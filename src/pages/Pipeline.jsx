@@ -7,10 +7,10 @@ import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 import { suggestActionForLead } from '../lib/emailTemplates';
 
 export default function Pipeline() {
-  const { prospects, deals, updateProspectStatus, addOutreachLog, markFollowUpDone, followups } = useData();
+  const { prospects, deals, updateProspectStatus } = useData();
   const { showToast } = useToast();
   const [detailId, setDetailId] = useState(null);
-  const [composerLead, setComposerLead] = useState(null);
+  const [composer, setComposer] = useState({ lead: null, followUpId: null });
 
   const dealsByProspectId = useMemo(() => {
     const map = {};
@@ -26,22 +26,6 @@ export default function Pipeline() {
     showToast(`${lead.companyName} moved to ${newStatus}`);
   }
 
-  function handleMarkSentComplete({ lead }) {
-    addOutreachLog({
-      prospectId: lead.id,
-      companyName: lead.companyName,
-      channel: 'Email',
-      direction: 'Sent',
-      messageSummary: 'Gmail draft sent',
-      messageBody: '',
-      outcome: '',
-      nextAction: ''
-    });
-    const openFollowUp = followups.find((f) => f.prospectId === lead.id && f.status === 'Pending');
-    if (openFollowUp) markFollowUpDone(openFollowUp.id);
-    showToast('Logged as sent and follow-up completed');
-  }
-
   return (
     <div className="space-y-6">
       <div>
@@ -51,14 +35,18 @@ export default function Pipeline() {
 
       <PipelineBoard leads={prospects} dealsByProspectId={dealsByProspectId} onMove={handleMove} onOpen={setDetailId} />
 
-      <LeadDetailDrawer lead={detailLead} onClose={() => setDetailId(null)} onSendFollowUp={setComposerLead} />
+      <LeadDetailDrawer
+        lead={detailLead}
+        onClose={() => setDetailId(null)}
+        onSendFollowUp={(lead, followUpId) => setComposer({ lead, followUpId })}
+      />
 
       <EmailComposerDrawer
-        open={!!composerLead}
-        onClose={() => setComposerLead(null)}
-        lead={composerLead}
-        initialTemplateKey={composerLead ? suggestActionForLead(composerLead).templateKey : undefined}
-        onMarkSentComplete={handleMarkSentComplete}
+        open={!!composer.lead}
+        onClose={() => setComposer({ lead: null, followUpId: null })}
+        lead={composer.lead}
+        followUpId={composer.followUpId}
+        initialTemplateKey={composer.lead ? suggestActionForLead(composer.lead).templateKey : undefined}
       />
     </div>
   );

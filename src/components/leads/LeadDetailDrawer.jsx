@@ -6,6 +6,7 @@ import EmptyState from '../ui/EmptyState';
 import { useData } from '../../context/DataContext';
 import { useToast } from '../../context/ToastContext';
 import { formatDate } from '../../lib/dateUtils';
+import { selectFollowUpToComplete } from '../../lib/followUpSelection';
 
 const STATUS_OPTIONS = ['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Decision Pending', 'Won', 'Lost'];
 const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px-3 py-2 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
@@ -19,7 +20,8 @@ export default function LeadDetailDrawer({ lead, onClose, onSendFollowUp }) {
 
   const logs = getOutreachLogsByProspect(lead.id);
   const relatedFollowUps = followups.filter((f) => f.prospectId === lead.id);
-  const openFollowUp = relatedFollowUps.find((f) => f.status === 'Pending');
+  const followUpToCompleteId = selectFollowUpToComplete(followups, { leadId: lead.id, explicitFollowUpId: null });
+  const openFollowUp = relatedFollowUps.find((f) => f.id === followUpToCompleteId) || relatedFollowUps.find((f) => f.status === 'Pending');
   const relatedDeal = deals.find((d) => d.prospectId === lead.id);
 
   function handleStatusChange(status) {
@@ -77,7 +79,7 @@ export default function LeadDetailDrawer({ lead, onClose, onSendFollowUp }) {
         </div>
 
         <button
-          onClick={() => onSendFollowUp(lead)}
+          onClick={() => onSendFollowUp(lead, followUpToCompleteId)}
           className="w-full rounded-xl bg-brand text-white font-semibold px-4 py-2.5 text-sm hover:bg-brand-dark min-h-[44px]"
         >
           Send / Follow Up

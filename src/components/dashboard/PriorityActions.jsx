@@ -20,7 +20,7 @@ export default function PriorityActions({ items, onAction }) {
               </div>
             </div>
             <button
-              onClick={() => onAction(lead, action.templateKey)}
+              onClick={() => onAction(lead, action.templateKey, followUp.id)}
               className="shrink-0 rounded-lg bg-brand text-white text-xs font-semibold px-3 py-2 min-h-[36px] hover:bg-brand-dark"
             >
               {action.label}

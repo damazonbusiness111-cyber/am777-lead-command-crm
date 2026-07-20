@@ -62,7 +62,7 @@ export default function FollowUpRow({ followUp, lead, onPrimaryAction, onMarkDon
         <div className="flex items-center justify-between gap-2 pt-1">
           {!isCompleted ? (
             <button
-              onClick={() => onPrimaryAction(lead, action.templateKey)}
+              onClick={() => onPrimaryAction(lead, action.templateKey, followUp.id)}
               disabled={!lead}
               className="rounded-lg bg-brand text-white text-xs font-semibold px-3 py-2 min-h-[36px] hover:bg-brand-dark disabled:opacity-40"
             >

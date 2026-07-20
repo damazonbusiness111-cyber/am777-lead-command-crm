@@ -1,4 +1,4 @@
-export default function GmailDraftActions({ gmailUrl, disabledReason, opened, onOpen, onMarkSentComplete }) {
+export default function GmailDraftActions({ gmailUrl, disabledReason, opened, saving, onOpen, onMarkSentComplete }) {
   if (disabledReason) {
     return <p className="text-xs text-danger bg-red-50 border border-red-200 rounded-xl px-3 py-2">{disabledReason}</p>;
   }
@@ -17,9 +17,10 @@ export default function GmailDraftActions({ gmailUrl, disabledReason, opened, on
       {opened && (
         <button
           onClick={onMarkSentComplete}
-          className="inline-flex items-center justify-center min-h-[44px] rounded-xl border border-success text-success font-semibold px-4 py-2.5 text-sm hover:bg-emerald-50 transition-colors"
+          disabled={saving}
+          className="inline-flex items-center justify-center min-h-[44px] rounded-xl border border-success text-success font-semibold px-4 py-2.5 text-sm hover:bg-emerald-50 transition-colors disabled:opacity-50"
         >
-          Mark Sent &amp; Complete
+          {saving ? 'Saving…' : 'Mark Sent & Complete'}
         </button>
       )}
       {!opened && (

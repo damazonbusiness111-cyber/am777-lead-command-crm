@@ -28,7 +28,7 @@ function parseCsv(text) {
 }
 
 export default function Leads() {
-  const { prospects, searchProspects, addProspect, updateProspect, deleteProspect, addOutreachLog, markFollowUpDone, followups } = useData();
+  const { prospects, searchProspects, addProspect, updateProspect, deleteProspect } = useData();
   const { showToast } = useToast();
   const location = useLocation();
 
@@ -38,7 +38,7 @@ export default function Leads() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingLead, setEditingLead] = useState(null);
   const [detailId, setDetailId] = useState(location.state?.openProspectId || null);
-  const [composerLead, setComposerLead] = useState(null);
+  const [composer, setComposer] = useState({ lead: null, followUpId: null });
   const [showGenerator, setShowGenerator] = useState(false);
   const [genForm, setGenForm] = useState({ niche: NICHES[0], location: '', offerType: OFFER_TYPES[0], painPoint: PAIN_POINTS[0] });
   const [genResult, setGenResult] = useState(null);
@@ -117,22 +117,6 @@ export default function Leads() {
     showToast('Lead created — fill in real contact details');
     setDetailId(prospect.id);
     setShowGenerator(false);
-  }
-
-  function handleMarkSentComplete({ lead }) {
-    addOutreachLog({
-      prospectId: lead.id,
-      companyName: lead.companyName,
-      channel: 'Email',
-      direction: 'Sent',
-      messageSummary: 'Gmail draft sent',
-      messageBody: '',
-      outcome: '',
-      nextAction: ''
-    });
-    const openFollowUp = followups.find((f) => f.prospectId === lead.id && f.status === 'Pending');
-    if (openFollowUp) markFollowUpDone(openFollowUp.id);
-    showToast('Logged as sent and follow-up completed');
   }
 
   const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px-3 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
@@ -226,14 +210,18 @@ export default function Leads() {
         {editingLead && <LeadForm initial={editingLead} onSubmit={handleEdit} onCancel={() => setEditingLead(null)} />}
       </Modal>
 
-      <LeadDetailDrawer lead={detailLead} onClose={() => setDetailId(null)} onSendFollowUp={setComposerLead} />
+      <LeadDetailDrawer
+        lead={detailLead}
+        onClose={() => setDetailId(null)}
+        onSendFollowUp={(lead, followUpId) => setComposer({ lead, followUpId })}
+      />
 
       <EmailComposerDrawer
-        open={!!composerLead}
-        onClose={() => setComposerLead(null)}
-        lead={composerLead}
-        initialTemplateKey={composerLead ? suggestActionForLead(composerLead).templateKey : undefined}
-        onMarkSentComplete={handleMarkSentComplete}
+        open={!!composer.lead}
+        onClose={() => setComposer({ lead: null, followUpId: null })}
+        lead={composer.lead}
+        followUpId={composer.followUpId}
+        initialTemplateKey={composer.lead ? suggestActionForLead(composer.lead).templateKey : undefined}
       />
     </div>
   );

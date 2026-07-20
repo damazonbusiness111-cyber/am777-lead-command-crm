@@ -252,8 +252,9 @@ export function DataProvider({ children }) {
   async function markFollowUpDone(id) {
     const completedAt = new Date().toISOString();
     const { error } = await supabase.from('followups').update({ status: 'Done', completed_at: completedAt }).eq('id', id);
-    if (error) { reportError('Mark follow-up done', error); return; }
+    if (error) { reportError('Mark follow-up done', error); return false; }
     setFollowups((prev) => prev.map((f) => (f.id === id ? { ...f, status: 'Done', completedAt } : f)));
+    return true;
   }
 
   async function skipFollowUp(id) {

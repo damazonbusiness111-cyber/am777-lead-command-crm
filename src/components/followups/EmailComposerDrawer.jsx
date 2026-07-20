@@ -4,17 +4,26 @@ import GmailDraftActions from './GmailDraftActions';
 import StatusBadge from '../ui/StatusBadge';
 import { EMAIL_TEMPLATE_KEYS, buildEmailFromTemplate } from '../../lib/emailTemplates';
 import { buildGmailComposeUrl, isValidEmail } from '../../lib/gmailCompose';
+import { completeSend } from '../../lib/completeSend';
 import { useToast } from '../../context/ToastContext';
+import { useData } from '../../context/DataContext';
 
 const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px-3 py-2.5 text-sm text-ink placeholder-ink-soft/50 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
 
-export default function EmailComposerDrawer({ open, onClose, lead, initialTemplateKey, onMarkSentComplete }) {
+// followUpId is the specific follow-up this send should complete — pass the exact id
+// from the row/action the user clicked (never re-derive "the first pending one" here,
+// a lead can have several). Pass null/undefined only when there genuinely isn't one
+// selected (e.g. a lead with no open follow-up); the outreach still gets logged.
+export default function EmailComposerDrawer({ open, onClose, lead, followUpId, initialTemplateKey }) {
   const { showToast } = useToast();
+  const { addOutreachLog, markFollowUpDone } = useData();
   const [templateKey, setTemplateKey] = useState(initialTemplateKey || 'General Follow-Up');
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [opened, setOpened] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   useEffect(() => {
     if (!open || !lead) return;
@@ -25,6 +34,7 @@ export default function EmailComposerDrawer({ open, onClose, lead, initialTempla
     setSubject(draft.subject);
     setBody(draft.body);
     setOpened(false);
+    setSaveError('');
   }, [open, lead, initialTemplateKey]);
 
   function handleTemplateChange(key) {
@@ -63,8 +73,17 @@ export default function EmailComposerDrawer({ open, onClose, lead, initialTempla
       .catch(() => showToast('Could not copy — select and copy manually', 'error'));
   }
 
-  function handleMarkSentComplete() {
-    onMarkSentComplete?.({ lead, templateKey, subject, body });
+  async function handleMarkSentComplete() {
+    setSaving(true);
+    setSaveError('');
+    const result = await completeSend({ addOutreachLog, markFollowUpDone, lead, followUpId, subject, body });
+    setSaving(false);
+    if (!result.success) {
+      setSaveError(result.error);
+      showToast(result.error, 'error');
+      return;
+    }
+    showToast('Logged as sent and follow-up completed');
     onClose();
   }
 
@@ -107,14 +126,16 @@ export default function EmailComposerDrawer({ open, onClose, lead, initialTempla
           </button>
         </div>
 
-        <div className="pt-2 border-t border-line">
+        <div className="pt-2 border-t border-line space-y-2">
           <GmailDraftActions
             gmailUrl={gmailUrl}
             disabledReason={disabledReason}
             opened={opened}
+            saving={saving}
             onOpen={() => setOpened(true)}
             onMarkSentComplete={handleMarkSentComplete}
           />
+          {saveError && <p className="text-xs text-danger bg-red-50 border border-red-200 rounded-xl px-3 py-2">{saveError}</p>}
         </div>
       </div>
     </Drawer>

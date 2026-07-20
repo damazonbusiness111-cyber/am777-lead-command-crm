@@ -1,11 +1,26 @@
+// The CRM's operational timezone is Asia/Manila (UTC+8, no DST) — every "today" /
+// "overdue" boundary must resolve against Manila's calendar day, not the
+// browser's or server's local timezone.
+const MANILA_TZ = 'Asia/Manila';
+
+function manilaDateStringFromInstant(date) {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: MANILA_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(date);
+  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
 export function todayISO() {
-  return new Date().toISOString().slice(0, 10);
+  return manilaDateStringFromInstant(new Date());
 }
 
 export function addDaysISO(days) {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
+  const [y, m, d] = todayISO().split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
 }
 
 export function isOverdue(dueDate, status) {

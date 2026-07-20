@@ -11,11 +11,11 @@ const TABS = ['Today', 'Overdue', 'Upcoming', 'Completed'];
 export default function FollowUps() {
   const {
     prospects, followups, markFollowUpDone, rescheduleFollowUp, updateFollowUpNotes,
-    skipFollowUp, updateProspectStatus, addOutreachLog
+    skipFollowUp, updateProspectStatus
   } = useData();
   const { showToast } = useToast();
   const [tab, setTab] = useState('Today');
-  const [composer, setComposer] = useState({ lead: null, templateKey: null });
+  const [composer, setComposer] = useState({ lead: null, templateKey: null, followUpId: null });
 
   const leadsById = useMemo(() => Object.fromEntries(prospects.map((p) => [p.id, p])), [prospects]);
 
@@ -27,31 +27,15 @@ export default function FollowUps() {
   const itemsByTab = { Today: dueToday, Overdue: overdue, Upcoming: upcoming, Completed: completed };
   const countByTab = { Today: dueToday.length, Overdue: overdue.length, Upcoming: upcoming.length, Completed: completed.length };
 
-  function handlePrimaryAction(lead, templateKey) {
+  function handlePrimaryAction(lead, templateKey, followUpId) {
     if (!lead) return;
-    setComposer({ lead, templateKey });
+    setComposer({ lead, templateKey, followUpId });
   }
 
   function handleMoveStatus(prospectId, status) {
     if (status === 'Lost' && !confirm('Mark this lead as Lost? This will skip its pending follow-ups.')) return;
     updateProspectStatus(prospectId, status);
     showToast(`Lead moved to ${status}`);
-  }
-
-  function handleMarkSentComplete({ lead }) {
-    addOutreachLog({
-      prospectId: lead.id,
-      companyName: lead.companyName,
-      channel: 'Email',
-      direction: 'Sent',
-      messageSummary: 'Gmail draft sent',
-      messageBody: '',
-      outcome: '',
-      nextAction: ''
-    });
-    const openFollowUp = followups.find((f) => f.prospectId === lead.id && f.status === 'Pending');
-    if (openFollowUp) markFollowUpDone(openFollowUp.id);
-    showToast('Logged as sent and follow-up completed');
   }
 
   const handlers = {
@@ -81,10 +65,10 @@ export default function FollowUps() {
 
       <EmailComposerDrawer
         open={!!composer.lead}
-        onClose={() => setComposer({ lead: null, templateKey: null })}
+        onClose={() => setComposer({ lead: null, templateKey: null, followUpId: null })}
         lead={composer.lead}
+        followUpId={composer.followUpId}
         initialTemplateKey={composer.templateKey}
-        onMarkSentComplete={handleMarkSentComplete}
       />
     </div>
   );
