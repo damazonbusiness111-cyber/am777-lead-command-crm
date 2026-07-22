@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Icon from './Icon';
 
 // Desktop: right-side drawer. Mobile: iOS-style bottom sheet that slides up,
 // with a grab handle and safe-area padding for the home indicator.
@@ -29,8 +30,8 @@ export default function Drawer({ open, onClose, title, children }) {
         </div>
         <div className="flex items-center justify-between px-6 py-4 border-b border-line sticky top-0 bg-surface-card z-10">
           <h2 className="text-lg font-semibold text-ink">{title}</h2>
-          <button onClick={onClose} aria-label="Close" className="text-ink-soft hover:text-brand transition-colors text-xl leading-none px-2 min-w-[44px] min-h-[44px]">
-            ×
+          <button onClick={onClose} aria-label="Close" className="text-ink-soft hover:text-brand transition-colors px-2 min-w-[44px] min-h-[44px] flex items-center justify-center">
+            <Icon name="close" className="w-5 h-5" />
           </button>
         </div>
         <div className="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">{children}</div>

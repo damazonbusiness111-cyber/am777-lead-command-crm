@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { GMAIL_STATUS_SHORT, GMAIL_API_CONNECTED } from '../../lib/gmailStatus';
+import Icon from '../ui/Icon';
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -25,21 +26,23 @@ export default function TopBar() {
 
   return (
     <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface-card/80 backdrop-blur-xl pt-safe-t px-4 py-3 lg:px-6">
-      <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md">
+      <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md relative">
+        <Icon name="search" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-soft pointer-events-none" />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search leads, companies..."
           aria-label="Search leads"
-          className="w-full rounded-xl border border-line bg-surface-page px-4 py-2 text-sm text-ink placeholder-ink-soft/60 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+          className="w-full rounded-xl border border-line bg-surface-page pl-9 pr-4 py-2 text-sm text-ink placeholder-ink-soft/60 outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
         />
       </form>
 
       <div className="ml-auto flex items-center gap-2">
         <button
           onClick={() => navigate('/follow-ups')}
-          className="hidden sm:inline-flex items-center min-h-[44px] rounded-xl bg-brand text-white font-semibold px-4 py-2 text-sm hover:bg-brand-dark transition-colors"
+          className="hidden sm:inline-flex items-center gap-1.5 min-h-[44px] rounded-xl bg-brand text-white font-semibold px-4 py-2 text-sm hover:bg-brand-dark transition-colors"
         >
+          <Icon name="send" className="w-4 h-4" />
           Send / Follow Up
         </button>
 
@@ -64,18 +67,20 @@ export default function TopBar() {
             {(session?.user?.email || '?').charAt(0).toUpperCase()}
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-56 rounded-xl border border-line bg-surface-card shadow-popover py-2 z-40">
+            <div className="absolute right-0 mt-2 w-56 rounded-xl border border-line bg-surface-card shadow-popover py-2 z-40 origin-top-right animate-[popIn_160ms_ease-out]">
               <p className="px-4 py-2 text-xs text-ink-soft truncate">{session?.user?.email}</p>
               <button
                 onClick={() => navigate('/settings')}
-                className="w-full text-left px-4 py-2 text-sm text-ink hover:bg-surface-page"
+                className="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-ink hover:bg-surface-page"
               >
+                <Icon name="settings" className="w-4 h-4 text-ink-soft" />
                 Settings
               </button>
               <button
                 onClick={signOut}
-                className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-red-50"
+                className="w-full text-left flex items-center gap-2.5 px-4 py-2 text-sm text-danger hover:bg-red-50"
               >
+                <Icon name="signOut" className="w-4 h-4" />
                 Sign Out
               </button>
             </div>

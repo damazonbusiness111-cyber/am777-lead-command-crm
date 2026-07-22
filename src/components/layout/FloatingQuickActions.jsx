@@ -4,6 +4,7 @@ import { useData } from '../../context/DataContext';
 import { isOverdue, isDueToday } from '../../lib/dateUtils';
 import { suggestActionForLead } from '../../lib/emailTemplates';
 import EmailComposerDrawer from '../followups/EmailComposerDrawer';
+import Icon from '../ui/Icon';
 
 // Quick Actions — deliberately template-based, not AI. This CRM never claims a
 // capability it doesn't have (see Gmail/Integrations status labels); a real
@@ -51,19 +52,21 @@ export default function FloatingQuickActions() {
     <>
       <div ref={panelRef} className="fixed z-40 bottom-24 right-4 lg:bottom-6 lg:right-6">
         {panelOpen && (
-          <div className="mb-3 w-60 rounded-2xl border border-line bg-surface-card shadow-popover p-2">
+          <div className="mb-3 w-60 rounded-2xl border border-line bg-surface-card shadow-popover p-2 origin-bottom-right animate-[popIn_180ms_ease-out]">
             <p className="px-3 pt-1.5 pb-2 text-[11px] font-semibold uppercase tracking-wide text-ink-soft">Quick Actions</p>
             <button
               onClick={handleFollowUpNow}
               disabled={!topFollowUp}
-              className="w-full text-left rounded-xl px-3 py-2.5 min-h-[44px] text-sm text-ink hover:bg-surface-page disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full text-left flex items-center gap-2.5 rounded-xl px-3 py-2.5 min-h-[44px] text-sm text-ink hover:bg-surface-page disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {topFollowUp ? `Follow Up — ${topFollowUp.lead.companyName}` : 'No follow-ups due'}
+              <Icon name="send" className="w-4 h-4 text-brand shrink-0" />
+              <span className="truncate">{topFollowUp ? `Follow Up — ${topFollowUp.lead.companyName}` : 'No follow-ups due'}</span>
             </button>
             <button
               onClick={handleLeadAngle}
-              className="w-full text-left rounded-xl px-3 py-2.5 min-h-[44px] text-sm text-ink hover:bg-surface-page"
+              className="w-full text-left flex items-center gap-2.5 rounded-xl px-3 py-2.5 min-h-[44px] text-sm text-ink hover:bg-surface-page"
             >
+              <Icon name="leads" className="w-4 h-4 text-brand shrink-0" />
               New Lead Angle
             </button>
           </div>
@@ -73,11 +76,9 @@ export default function FloatingQuickActions() {
           aria-label="Quick actions"
           aria-haspopup="true"
           aria-expanded={panelOpen}
-          className="flex items-center justify-center w-14 h-14 rounded-full bg-navy text-white shadow-popover hover:bg-navy-soft transition-colors"
+          className="flex items-center justify-center w-14 h-14 rounded-full bg-navy text-white shadow-popover hover:bg-navy-soft transition-transform duration-200 ease-ios"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-            <path d="M13 3 5 13h5l-1 8 8-10h-5l1-8Z" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <Icon name="bolt" className={`w-6 h-6 transition-transform duration-200 ease-ios ${panelOpen ? 'rotate-45' : ''}`} />
         </button>
       </div>
 

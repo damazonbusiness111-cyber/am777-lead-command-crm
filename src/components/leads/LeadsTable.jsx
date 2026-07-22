@@ -1,6 +1,7 @@
 import StatusBadge from '../ui/StatusBadge';
 import PriorityBadge from '../ui/PriorityBadge';
 import EmptyState from '../ui/EmptyState';
+import Icon from '../ui/Icon';
 import { formatDate } from '../../lib/dateUtils';
 
 export default function LeadsTable({ leads, onOpen, onEdit, onDelete }) {
@@ -33,9 +34,15 @@ export default function LeadsTable({ leads, onOpen, onEdit, onDelete }) {
               <td className="px-4 py-3 text-ink-soft">{p.leadScore ?? '—'}</td>
               <td className="px-4 py-3"><StatusBadge status={p.status} /></td>
               <td className="px-4 py-3 text-ink-soft">{formatDate(p.nextFollowUpDate)}</td>
-              <td className="px-4 py-3 text-right space-x-2" onClick={(e) => e.stopPropagation()}>
-                <button onClick={() => onEdit(p)} className="text-xs text-brand hover:underline">Edit</button>
-                <button onClick={() => onDelete(p.id)} className="text-xs text-danger hover:underline">Delete</button>
+              <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
+                <div className="flex justify-end gap-1">
+                  <button onClick={() => onEdit(p)} aria-label={`Edit ${p.companyName}`} title="Edit" className="p-2 rounded-lg text-ink-soft hover:text-brand hover:bg-brand-light min-w-[36px] min-h-[36px]">
+                    <Icon name="edit" className="w-4 h-4" />
+                  </button>
+                  <button onClick={() => onDelete(p.id)} aria-label={`Delete ${p.companyName}`} title="Delete" className="p-2 rounded-lg text-ink-soft hover:text-danger hover:bg-red-50 min-w-[36px] min-h-[36px]">
+                    <Icon name="trash" className="w-4 h-4" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

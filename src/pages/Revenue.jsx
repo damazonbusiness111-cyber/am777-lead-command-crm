@@ -6,6 +6,7 @@ import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
 import Modal from '../components/ui/Modal';
+import Icon from '../components/ui/Icon';
 
 const DEAL_STATUSES = ['Draft', 'Proposal Sent', 'Negotiating', 'Won', 'Lost', 'Paid'];
 const PAYMENT_STATUSES = ['Unpaid', 'Partial', 'Paid'];
@@ -143,9 +144,15 @@ export default function Revenue() {
                   <td className="px-4 py-3"><StatusBadge status={d.dealStatus} /></td>
                   <td className="px-4 py-3"><StatusBadge status={d.paymentStatus} /></td>
                   <td className="px-4 py-3 text-ink-soft">{formatDate(d.paymentDate)}</td>
-                  <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => setEditing(d)} className="text-xs text-brand hover:underline">Edit</button>
-                    <button onClick={() => handleDelete(d.id)} className="text-xs text-danger hover:underline">Delete</button>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex justify-end gap-1">
+                      <button onClick={() => setEditing(d)} aria-label={`Edit ${d.companyName}`} title="Edit" className="p-2 rounded-lg text-ink-soft hover:text-brand hover:bg-brand-light min-w-[36px] min-h-[36px]">
+                        <Icon name="edit" className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(d.id)} aria-label={`Delete ${d.companyName}`} title="Delete" className="p-2 rounded-lg text-ink-soft hover:text-danger hover:bg-red-50 min-w-[36px] min-h-[36px]">
+                        <Icon name="trash" className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

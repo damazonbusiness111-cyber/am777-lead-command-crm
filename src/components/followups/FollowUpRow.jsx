@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import StatusBadge from '../ui/StatusBadge';
 import SwipeableRow from '../ui/SwipeableRow';
+import Icon from '../ui/Icon';
 import { formatDate } from '../../lib/dateUtils';
 import { suggestActionForLead } from '../../lib/emailTemplates';
 
@@ -75,26 +76,34 @@ export default function FollowUpRow({ followUp, lead, onPrimaryAction, onMarkDon
               onClick={() => setMenuOpen((v) => !v)}
               aria-label="More actions"
               aria-haspopup="true"
-              className="rounded-lg border border-line px-2 py-2 text-xs text-ink-soft hover:border-brand/40 min-w-[36px] min-h-[36px]"
+              className="rounded-lg border border-line px-2 py-2 text-ink-soft hover:border-brand/40 min-w-[36px] min-h-[36px] flex items-center justify-center"
             >
-              ⋯
+              <Icon name="more" className="w-4 h-4" />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 mt-1 w-44 rounded-xl border border-line bg-surface-card shadow-popover py-1 z-20">
+              <div className="absolute right-0 mt-1 w-48 rounded-xl border border-line bg-surface-card shadow-popover py-1 z-20 origin-top-right animate-[popIn_160ms_ease-out]">
                 {!isCompleted && (
                   <>
-                    <button onClick={() => { onMarkDone(followUp.id); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-xs text-ink hover:bg-surface-page">Mark Complete</button>
-                    <button onClick={() => { setRescheduling(true); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-xs text-ink hover:bg-surface-page">Reschedule</button>
+                    <button onClick={() => { onMarkDone(followUp.id); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs text-ink hover:bg-surface-page">
+                      <Icon name="check" className="w-4 h-4 text-ink-soft" />Mark Complete
+                    </button>
+                    <button onClick={() => { setRescheduling(true); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs text-ink hover:bg-surface-page">
+                      <Icon name="calendarClock" className="w-4 h-4 text-ink-soft" />Reschedule
+                    </button>
                   </>
                 )}
-                <button onClick={() => { setAddingNote(true); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-xs text-ink hover:bg-surface-page">Add Note</button>
+                <button onClick={() => { setAddingNote(true); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs text-ink hover:bg-surface-page">
+                  <Icon name="note" className="w-4 h-4 text-ink-soft" />Add Note
+                </button>
                 {!isCompleted && lead && MOVE_STATUS_OPTIONS.map((s) => (
-                  <button key={s} onClick={() => { onMoveStatus(lead.id, s); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-xs text-ink hover:bg-surface-page">
-                    Move to {s}
+                  <button key={s} onClick={() => { onMoveStatus(lead.id, s); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs text-ink hover:bg-surface-page">
+                    <Icon name="chevronRight" className="w-4 h-4 text-ink-soft" />Move to {s}
                   </button>
                 ))}
                 {!isCompleted && (
-                  <button onClick={() => { onSkip(followUp.id); setMenuOpen(false); }} className="w-full text-left px-3 py-2 text-xs text-danger hover:bg-red-50">Skip</button>
+                  <button onClick={() => { onSkip(followUp.id); setMenuOpen(false); }} className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs text-danger hover:bg-red-50">
+                    <Icon name="skip" className="w-4 h-4" />Skip
+                  </button>
                 )}
               </div>
             )}

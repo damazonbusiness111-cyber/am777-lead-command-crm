@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Icon from './Icon';
 
 export default function Modal({ open, onClose, title, children, wide = false }) {
   useEffect(() => {
@@ -15,16 +16,16 @@ export default function Modal({ open, onClose, title, children, wide = false }) 
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-label={title}>
       <div className="fixed inset-0 bg-ink/40 backdrop-blur-sm" onClick={onClose} />
       <div
-        className={`relative w-full ${wide ? 'max-w-2xl' : 'max-w-lg'} my-8 rounded-2xl border border-line bg-surface-card shadow-popover p-6`}
+        className={`relative w-full ${wide ? 'max-w-2xl' : 'max-w-lg'} my-8 rounded-2xl border border-line bg-surface-card shadow-popover p-6 animate-[popIn_220ms_ease-out]`}
       >
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="text-ink-soft hover:text-brand transition-colors text-xl leading-none px-2 min-w-[44px] min-h-[44px]"
+            className="text-ink-soft hover:text-brand transition-colors px-2 min-w-[44px] min-h-[44px] flex items-center justify-center"
             aria-label="Close"
           >
-            ×
+            <Icon name="close" className="w-5 h-5" />
           </button>
         </div>
         {children}
