@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { GMAIL_STATUS_SHORT, GMAIL_API_CONNECTED } from '../../lib/gmailStatus';
 import Icon from '../ui/Icon';
+import LiveClock from './LiveClock';
 
 export default function TopBar() {
   const navigate = useNavigate();
@@ -37,7 +38,9 @@ export default function TopBar() {
         />
       </form>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-3">
+        <LiveClock />
+
         <button
           onClick={() => navigate('/follow-ups')}
           className="hidden sm:inline-flex items-center gap-1.5 min-h-[44px] rounded-xl bg-brand text-white font-semibold px-4 py-2 text-sm hover:bg-brand-dark transition-colors"

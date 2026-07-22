@@ -5,8 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import { GMAIL_STATUS_LABEL } from '../lib/gmailStatus';
 import { EMAIL_TEMPLATE_KEYS, buildEmailFromTemplate } from '../lib/emailTemplates';
 import SegmentedControl from '../components/ui/SegmentedControl';
+import { DASHBOARD_SECTIONS, loadDashboardPrefs, saveDashboardPrefs } from '../lib/dashboardPrefs';
 
-const TABS = ['General', 'Email', 'Automation', 'Templates', 'Data', 'Advanced'];
+const TABS = ['General', 'Dashboard', 'Email', 'Automation', 'Templates', 'Data', 'Advanced'];
 const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px-3 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
 
 const SAMPLE_LEAD = { contactName: 'Sample Contact', companyName: 'Sample Business', problemObserved: 'slow lead follow-up', serviceFit: 'a lead follow-up CRM' };
@@ -17,7 +18,16 @@ export default function Settings() {
   const { session, signOut } = useAuth();
   const [tab, setTab] = useState('General');
   const [form, setForm] = useState(settings);
+  const [dashboardPrefs, setDashboardPrefs] = useState(loadDashboardPrefs);
   const fileInputRef = useRef(null);
+
+  function toggleSection(key) {
+    setDashboardPrefs((prev) => {
+      const next = { ...prev, sections: { ...prev.sections, [key]: !prev.sections[key] } };
+      saveDashboardPrefs(next);
+      return next;
+    });
+  }
 
   function set(key, value) { setForm((prev) => ({ ...prev, [key]: value })); }
 
@@ -80,6 +90,32 @@ export default function Settings() {
             <input value={form.defaultCurrency} onChange={(e) => set('defaultCurrency', e.target.value)} className={inputClass} />
           </label>
           <button onClick={saveSettings} className="rounded-xl bg-brand text-white font-semibold px-4 py-2.5 text-sm hover:bg-brand-dark min-h-[44px]">Save Settings</button>
+        </section>
+      )}
+
+      {tab === 'Dashboard' && (
+        <section className="rounded-2xl border border-line bg-surface-card p-5 space-y-4">
+          <div>
+            <h2 className="font-semibold text-ink">Dashboard Sections</h2>
+            <p className="text-xs text-ink-soft mt-1">Choose what shows on your Dashboard. Recommended Actions stays first — it's what to do next, ranked by urgency.</p>
+          </div>
+          <div className="space-y-1">
+            {DASHBOARD_SECTIONS.map((section) => (
+              <label key={section.key} className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 min-h-[44px] hover:bg-surface-page cursor-pointer">
+                <div>
+                  <p className="text-sm text-ink font-medium">{section.label}</p>
+                  <p className="text-xs text-ink-soft">{section.hint}</p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={dashboardPrefs.sections[section.key]}
+                  onChange={() => toggleSection(section.key)}
+                  className="w-5 h-5 accent-brand shrink-0"
+                />
+              </label>
+            ))}
+          </div>
+          <p className="text-xs text-ink-soft">This preference is saved on this device/browser only, not shared across devices.</p>
         </section>
       )}
 

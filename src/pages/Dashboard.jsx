@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { isOverdue, isDueToday, formatDate } from '../lib/dateUtils';
+import { loadDashboardPrefs, saveDashboardPrefs } from '../lib/dashboardPrefs';
 import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
@@ -11,16 +12,31 @@ import PipelineSnapshot from '../components/dashboard/PipelineSnapshot';
 import RecentLeads from '../components/dashboard/RecentLeads';
 import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 
+const GraphView = lazy(() => import('../components/dashboard/GraphView'));
+
 const HOT_STATUSES = ['Qualified', 'Booked Call', 'Proposal Sent', 'Decision Pending'];
 
 function fadeStep(step) {
   return { animation: `fadeIn 320ms ease-out both`, animationDelay: `${step * 60}ms` };
 }
 
+function GraphFallback() {
+  return <div className="h-64 flex items-center justify-center text-sm text-ink-soft">Loading graph…</div>;
+}
+
 export default function Dashboard() {
   const { prospects, followups, deals, settings } = useData();
   const navigate = useNavigate();
   const [composer, setComposer] = useState({ lead: null, templateKey: null, followUpId: null });
+  const [prefs, setPrefs] = useState(loadDashboardPrefs);
+
+  function handleGraphTabChange(graphTab) {
+    setPrefs((prev) => {
+      const next = { ...prev, graphTab };
+      saveDashboardPrefs(next);
+      return next;
+    });
+  }
 
   const currency = settings.defaultCurrency || 'PHP';
   const firstName = (settings.ownerName || '').split(' ')[0];
@@ -49,6 +65,8 @@ export default function Dashboard() {
   const followUpQueue = useMemo(() => followups.filter((f) => f.status === 'Pending').sort((a, b) => (a.dueDate || '').localeCompare(b.dueDate || '')).slice(0, 5), [followups]);
   const recentRevenue = useMemo(() => [...deals].sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)).slice(0, 5), [deals]);
 
+  const { sections } = prefs;
+
   return (
     <div className="space-y-6">
       <div style={fadeStep(0)}>
@@ -65,68 +83,86 @@ export default function Dashboard() {
         <MetricCard label="Expected Revenue" value={`${currency} ${expectedRevenue.toLocaleString()}`} icon="revenue" />
       </div>
 
-      <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-4" style={fadeStep(2)}>
-        <h2 className="font-semibold text-ink">Priority Actions</h2>
-        <PriorityActions items={priorityItems} onAction={(lead, templateKey, followUpId) => setComposer({ lead, templateKey, followUpId })} />
-      </div>
+      {sections.priorityActions && (
+        <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-4" style={fadeStep(2)}>
+          <h2 className="font-semibold text-ink">Priority Actions</h2>
+          <PriorityActions items={priorityItems} onAction={(lead, templateKey, followUpId) => setComposer({ lead, templateKey, followUpId })} />
+        </div>
+      )}
 
-      <div style={fadeStep(3)}>
-        <PipelineSnapshot prospects={prospects} dealsByProspectId={dealsByProspectId} currency={currency} />
-      </div>
+      {sections.graphView && (
+        <div style={fadeStep(3)}>
+          <Suspense fallback={<GraphFallback />}>
+            <GraphView prospects={prospects} deals={deals} currency={currency} initialTab={prefs.graphTab} onTabChange={handleGraphTabChange} />
+          </Suspense>
+        </div>
+      )}
 
-      <div className="grid lg:grid-cols-3 gap-4" style={fadeStep(4)}>
-        <RecentLeads leads={recentLeads} />
+      {sections.pipelineSnapshot && (
+        <div style={fadeStep(3)}>
+          <PipelineSnapshot prospects={prospects} dealsByProspectId={dealsByProspectId} currency={currency} />
+        </div>
+      )}
 
-        <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-ink">Follow-up Queue</h2>
-            <Link to="/follow-ups" className="text-xs text-brand hover:underline">View all →</Link>
-          </div>
-          {followUpQueue.length === 0 ? <EmptyState title="Queue is clear" /> : (
-            <ul className="space-y-1 -mx-2">
-              {followUpQueue.map((f) => (
-                <li key={f.id}>
-                  <button
-                    onClick={() => navigate('/follow-ups')}
-                    className="w-full flex items-center justify-between gap-2 text-sm rounded-lg px-2 py-2 min-h-[44px] hover:bg-surface-page transition-colors text-left"
-                  >
-                    <span className="text-ink truncate">{f.companyName}</span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-ink-soft">{formatDate(f.dueDate)}</span>
-                      <Icon name="chevronRight" className="w-3.5 h-3.5 text-ink-soft" />
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+      {(sections.recentLeads || sections.followUpQueue || sections.recentRevenue) && (
+        <div className="grid lg:grid-cols-3 gap-4" style={fadeStep(4)}>
+          {sections.recentLeads && <RecentLeads leads={recentLeads} />}
+
+          {sections.followUpQueue && (
+            <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="font-semibold text-ink">Follow-up Queue</h2>
+                <Link to="/follow-ups" className="text-xs text-brand hover:underline">View all →</Link>
+              </div>
+              {followUpQueue.length === 0 ? <EmptyState title="Queue is clear" /> : (
+                <ul className="space-y-1 -mx-2">
+                  {followUpQueue.map((f) => (
+                    <li key={f.id}>
+                      <button
+                        onClick={() => navigate('/follow-ups')}
+                        className="w-full flex items-center justify-between gap-2 text-sm rounded-lg px-2 py-2 min-h-[44px] hover:bg-surface-page transition-colors text-left"
+                      >
+                        <span className="text-ink truncate">{f.companyName}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs text-ink-soft">{formatDate(f.dueDate)}</span>
+                          <Icon name="chevronRight" className="w-3.5 h-3.5 text-ink-soft" />
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {sections.recentRevenue && (
+            <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="font-semibold text-ink">Recent Revenue</h2>
+                <Link to="/revenue" className="text-xs text-brand hover:underline">View all →</Link>
+              </div>
+              {recentRevenue.length === 0 ? <EmptyState title="No deals yet" /> : (
+                <ul className="space-y-1 -mx-2">
+                  {recentRevenue.map((d) => (
+                    <li key={d.id}>
+                      <button
+                        onClick={() => navigate('/revenue')}
+                        className="w-full flex items-center justify-between gap-2 text-sm rounded-lg px-2 py-2 min-h-[44px] hover:bg-surface-page transition-colors text-left"
+                      >
+                        <span className="text-ink truncate">{d.companyName}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <StatusBadge status={d.dealStatus} />
+                          <span className="text-xs text-ink-soft">{d.currency} {Number(d.amount || 0).toLocaleString()}</span>
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
         </div>
-
-        <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-ink">Recent Revenue</h2>
-            <Link to="/revenue" className="text-xs text-brand hover:underline">View all →</Link>
-          </div>
-          {recentRevenue.length === 0 ? <EmptyState title="No deals yet" /> : (
-            <ul className="space-y-1 -mx-2">
-              {recentRevenue.map((d) => (
-                <li key={d.id}>
-                  <button
-                    onClick={() => navigate('/revenue')}
-                    className="w-full flex items-center justify-between gap-2 text-sm rounded-lg px-2 py-2 min-h-[44px] hover:bg-surface-page transition-colors text-left"
-                  >
-                    <span className="text-ink truncate">{d.companyName}</span>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <StatusBadge status={d.dealStatus} />
-                      <span className="text-xs text-ink-soft">{d.currency} {Number(d.amount || 0).toLocaleString()}</span>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
+      )}
 
       <EmailComposerDrawer
         open={!!composer.lead}
