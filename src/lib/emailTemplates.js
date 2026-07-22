@@ -13,14 +13,18 @@ function greeting(contactName) {
   return contactName ? `Hi ${contactName.split(' ')[0]},` : 'Hi there,';
 }
 
+function lowerFirst(str) {
+  return str ? str.charAt(0).toLowerCase() + str.slice(1) : str;
+}
+
 const BUILDERS = {
   'First Outreach': (lead) => ({
     subject: `Quick idea for ${lead.companyName || 'your business'}`,
-    body: `${greeting(lead.contactName)}\n\nI help businesses like ${lead.companyName || 'yours'} fix "${lead.problemObserved || 'slow lead follow-up'}" with ${lead.serviceFit || 'a simple automation system'} — built so nothing falls through the cracks.\n\nWould you be open to a quick look at how this could work for you?\n\nBest,\nAM777 Automation Solutions`
+    body: `${greeting(lead.contactName)}\n\nI help businesses like ${lead.companyName || 'yours'} fix ${lowerFirst(lead.problemObserved) || 'slow lead follow-up'} with ${lead.serviceFit || 'a simple automation system'} — built so nothing falls through the cracks.\n\nWould you be open to a quick look at how this could work for you?\n\nBest,\nAM777 Automation Solutions`
   }),
   'General Follow-Up': (lead) => ({
     subject: `Following up — ${lead.companyName || 'quick question'}`,
-    body: `${greeting(lead.contactName)}\n\nJust following up on my last message. Still happy to help with "${lead.problemObserved || 'this'}" whenever you're ready — no pressure.\n\nLet me know if now's a good time.\n\nBest,\nAM777 Automation Solutions`
+    body: `${greeting(lead.contactName)}\n\nJust following up on my last message. Still happy to help with ${lowerFirst(lead.problemObserved) || 'this'} whenever you're ready — no pressure.\n\nLet me know if now's a good time.\n\nBest,\nAM777 Automation Solutions`
   }),
   'Proposal Follow-Up': (lead) => ({
     subject: `Checking in on the proposal — ${lead.companyName || ''}`.trim(),
