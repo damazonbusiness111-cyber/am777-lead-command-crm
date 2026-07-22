@@ -11,7 +11,7 @@ export default function PriorityActions({ items, onAction }) {
       {items.map(({ followUp, lead }) => {
         const action = suggestActionForLead(lead, { unpaidWon: lead.status === 'Won' });
         return (
-          <div key={followUp.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface-card p-3">
+          <div key={followUp.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface-card p-3 hover:border-brand/30 transition-colors">
             <div className="min-w-0">
               <p className="font-medium text-sm text-ink truncate">{lead.companyName}</p>
               <div className="flex items-center gap-2 mt-1">

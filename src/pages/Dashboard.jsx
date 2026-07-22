@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { isOverdue, isDueToday, formatDate } from '../lib/dateUtils';
 import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
+import Icon from '../components/ui/Icon';
 import PriorityActions from '../components/dashboard/PriorityActions';
 import PipelineSnapshot from '../components/dashboard/PipelineSnapshot';
 import RecentLeads from '../components/dashboard/RecentLeads';
@@ -12,11 +13,17 @@ import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 
 const HOT_STATUSES = ['Qualified', 'Booked Call', 'Proposal Sent', 'Decision Pending'];
 
+function fadeStep(step) {
+  return { animation: `fadeIn 320ms ease-out both`, animationDelay: `${step * 60}ms` };
+}
+
 export default function Dashboard() {
   const { prospects, followups, deals, settings } = useData();
+  const navigate = useNavigate();
   const [composer, setComposer] = useState({ lead: null, templateKey: null, followUpId: null });
 
   const currency = settings.defaultCurrency || 'PHP';
+  const firstName = (settings.ownerName || '').split(' ')[0];
   const leadsById = useMemo(() => Object.fromEntries(prospects.map((p) => [p.id, p])), [prospects]);
   const dealsByProspectId = useMemo(() => {
     const map = {};
@@ -44,26 +51,30 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink">Dashboard</h1>
-        <p className="text-ink-soft text-sm mt-1">Daily command center</p>
+      <div style={fadeStep(0)}>
+        <h1 className="text-2xl font-bold text-ink">
+          {firstName ? `Welcome back, ${firstName}` : 'Dashboard'}
+        </h1>
+        <p className="text-ink-soft text-sm mt-1">Here's what needs your attention today.</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard label="New Leads" value={newLeadsCount} accent />
-        <MetricCard label="Follow-ups Today" value={followUpsTodayCount} accent />
-        <MetricCard label="Hot Opportunities" value={hotOpportunitiesCount} />
-        <MetricCard label="Expected Revenue" value={`${currency} ${expectedRevenue.toLocaleString()}`} />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" style={fadeStep(1)}>
+        <MetricCard label="New Leads" value={newLeadsCount} icon="leads" accent />
+        <MetricCard label="Follow-ups Today" value={followUpsTodayCount} icon="followups" accent />
+        <MetricCard label="Hot Opportunities" value={hotOpportunitiesCount} icon="bolt" />
+        <MetricCard label="Expected Revenue" value={`${currency} ${expectedRevenue.toLocaleString()}`} icon="revenue" />
       </div>
 
-      <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-4">
+      <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-4" style={fadeStep(2)}>
         <h2 className="font-semibold text-ink">Priority Actions</h2>
         <PriorityActions items={priorityItems} onAction={(lead, templateKey, followUpId) => setComposer({ lead, templateKey, followUpId })} />
       </div>
 
-      <PipelineSnapshot prospects={prospects} dealsByProspectId={dealsByProspectId} currency={currency} />
+      <div style={fadeStep(3)}>
+        <PipelineSnapshot prospects={prospects} dealsByProspectId={dealsByProspectId} currency={currency} />
+      </div>
 
-      <div className="grid lg:grid-cols-3 gap-4">
+      <div className="grid lg:grid-cols-3 gap-4" style={fadeStep(4)}>
         <RecentLeads leads={recentLeads} />
 
         <div className="rounded-2xl border border-line bg-surface-card p-5 space-y-3">
@@ -72,11 +83,19 @@ export default function Dashboard() {
             <Link to="/follow-ups" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
           {followUpQueue.length === 0 ? <EmptyState title="Queue is clear" /> : (
-            <ul className="space-y-2">
+            <ul className="space-y-1 -mx-2">
               {followUpQueue.map((f) => (
-                <li key={f.id} className="flex items-center justify-between text-sm">
-                  <span className="text-ink truncate">{f.companyName}</span>
-                  <span className="text-xs text-ink-soft shrink-0">{formatDate(f.dueDate)}</span>
+                <li key={f.id}>
+                  <button
+                    onClick={() => navigate('/follow-ups')}
+                    className="w-full flex items-center justify-between gap-2 text-sm rounded-lg px-2 py-2 min-h-[44px] hover:bg-surface-page transition-colors text-left"
+                  >
+                    <span className="text-ink truncate">{f.companyName}</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-xs text-ink-soft">{formatDate(f.dueDate)}</span>
+                      <Icon name="chevronRight" className="w-3.5 h-3.5 text-ink-soft" />
+                    </div>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -89,14 +108,19 @@ export default function Dashboard() {
             <Link to="/revenue" className="text-xs text-brand hover:underline">View all →</Link>
           </div>
           {recentRevenue.length === 0 ? <EmptyState title="No deals yet" /> : (
-            <ul className="space-y-2">
+            <ul className="space-y-1 -mx-2">
               {recentRevenue.map((d) => (
-                <li key={d.id} className="flex items-center justify-between text-sm">
-                  <span className="text-ink truncate">{d.companyName}</span>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <StatusBadge status={d.dealStatus} />
-                    <span className="text-xs text-ink-soft">{d.currency} {Number(d.amount || 0).toLocaleString()}</span>
-                  </div>
+                <li key={d.id}>
+                  <button
+                    onClick={() => navigate('/revenue')}
+                    className="w-full flex items-center justify-between gap-2 text-sm rounded-lg px-2 py-2 min-h-[44px] hover:bg-surface-page transition-colors text-left"
+                  >
+                    <span className="text-ink truncate">{d.companyName}</span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <StatusBadge status={d.dealStatus} />
+                      <span className="text-xs text-ink-soft">{d.currency} {Number(d.amount || 0).toLocaleString()}</span>
+                    </div>
+                  </button>
                 </li>
               ))}
             </ul>
