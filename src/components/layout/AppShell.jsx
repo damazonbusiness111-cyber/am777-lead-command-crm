@@ -4,6 +4,7 @@ import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import MobileTabBar from './MobileTabBar';
 import MoreSheet from './MoreSheet';
+import FloatingQuickActions from './FloatingQuickActions';
 
 const MORE_PATHS = ['/revenue', '/integrations', '/settings'];
 
@@ -27,6 +28,7 @@ export default function AppShell({ children }) {
 
       <MobileTabBar onOpenMore={() => setMoreOpen(true)} moreActive={moreActive} />
       <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <FloatingQuickActions />
     </div>
   );
 }

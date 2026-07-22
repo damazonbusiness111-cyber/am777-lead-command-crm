@@ -41,6 +41,23 @@ export function buildEmailFromTemplate(templateKey, lead) {
   return builder(lead || {});
 }
 
+const SIGNATURE_TAGLINE = 'Automating growth, one lead at a time.';
+
+// Plain-text signature appended to every draft. Gmail's compose deep link only
+// accepts a plain-text body (no HTML/images render there) — the branded logo +
+// styling only shows in the in-app preview, never in the actual Gmail draft.
+export function buildSignature(settings) {
+  return {
+    brandName: settings?.brandName || 'AM777 Automation Solutions',
+    tagline: SIGNATURE_TAGLINE
+  };
+}
+
+export function appendSignature(body, settings) {
+  const { brandName, tagline } = buildSignature(settings);
+  return `${body}\n\n—\n${brandName}\n${tagline}`;
+}
+
 // Maps a lead's current pipeline status (and payment state) to the most relevant
 // template + a human action label — used to pick the primary contextual action.
 export function suggestActionForLead(lead, { unpaidWon = false } = {}) {

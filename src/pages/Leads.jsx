@@ -39,7 +39,7 @@ export default function Leads() {
   const [editingLead, setEditingLead] = useState(null);
   const [detailId, setDetailId] = useState(location.state?.openProspectId || null);
   const [composer, setComposer] = useState({ lead: null, followUpId: null });
-  const [showGenerator, setShowGenerator] = useState(false);
+  const [showGenerator, setShowGenerator] = useState(!!location.state?.openGenerator);
   const [genForm, setGenForm] = useState({ niche: NICHES[0], location: '', offerType: OFFER_TYPES[0], painPoint: PAIN_POINTS[0] });
   const [genResult, setGenResult] = useState(null);
   const fileInputRef = useRef(null);

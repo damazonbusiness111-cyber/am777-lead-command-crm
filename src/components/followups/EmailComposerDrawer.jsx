@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Drawer from '../ui/Drawer';
 import GmailDraftActions from './GmailDraftActions';
 import StatusBadge from '../ui/StatusBadge';
-import { EMAIL_TEMPLATE_KEYS, buildEmailFromTemplate } from '../../lib/emailTemplates';
+import { EMAIL_TEMPLATE_KEYS, buildEmailFromTemplate, appendSignature, buildSignature } from '../../lib/emailTemplates';
 import { buildGmailComposeUrl, isValidEmail } from '../../lib/gmailCompose';
 import { completeSend } from '../../lib/completeSend';
 import { useToast } from '../../context/ToastContext';
@@ -16,7 +16,7 @@ const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px
 // selected (e.g. a lead with no open follow-up); the outreach still gets logged.
 export default function EmailComposerDrawer({ open, onClose, lead, followUpId, initialTemplateKey }) {
   const { showToast } = useToast();
-  const { addOutreachLog, markFollowUpDone } = useData();
+  const { addOutreachLog, markFollowUpDone, settings } = useData();
   const [templateKey, setTemplateKey] = useState(initialTemplateKey || 'General Follow-Up');
   const [to, setTo] = useState('');
   const [subject, setSubject] = useState('');
@@ -32,7 +32,7 @@ export default function EmailComposerDrawer({ open, onClose, lead, followUpId, i
     setTo(lead.email || '');
     const draft = buildEmailFromTemplate(key, lead);
     setSubject(draft.subject);
-    setBody(draft.body);
+    setBody(appendSignature(draft.body, settings));
     setOpened(false);
     setSaveError('');
   }, [open, lead, initialTemplateKey]);
@@ -41,8 +41,10 @@ export default function EmailComposerDrawer({ open, onClose, lead, followUpId, i
     setTemplateKey(key);
     const draft = buildEmailFromTemplate(key, lead);
     setSubject(draft.subject);
-    setBody(draft.body);
+    setBody(appendSignature(draft.body, settings));
   }
+
+  const signature = buildSignature(settings);
 
   if (!lead) {
     return (
@@ -124,6 +126,17 @@ export default function EmailComposerDrawer({ open, onClose, lead, followUpId, i
           <button onClick={handleCopy} className="rounded-lg border border-line px-3 py-2 text-xs font-medium text-ink hover:border-brand/40 min-h-[44px]">
             Copy Message
           </button>
+        </div>
+
+        <div className="rounded-xl border border-line bg-surface-page p-4 space-y-2">
+          <p className="text-[11px] uppercase tracking-wide text-ink-soft">Signature preview — Gmail shows this as plain text</p>
+          <div className="flex items-center gap-3">
+            <img src="/logo-mark.svg" alt="" className="w-10 h-10 rounded-xl flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-ink truncate">{signature.brandName}</p>
+              <p className="text-xs text-ink-soft truncate">{signature.tagline}</p>
+            </div>
+          </div>
         </div>
 
         <div className="pt-2 border-t border-line space-y-2">
