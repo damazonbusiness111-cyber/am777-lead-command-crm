@@ -12,11 +12,12 @@ import FollowUps from './pages/FollowUps';
 import Revenue from './pages/Revenue';
 import Integrations from './pages/Integrations';
 import Settings from './pages/Settings';
+import { AUTH_BYPASS_ENABLED } from './lib/authBypass';
 
 function AuthGate() {
   const { session, loading, recoveryMode } = useAuth();
 
-  if (loading) {
+  if (loading && !AUTH_BYPASS_ENABLED) {
     return (
       <div className="min-h-screen bg-surface-page flex items-center justify-center">
         <p className="text-ink-soft text-sm">Loading...</p>
@@ -29,7 +30,7 @@ function AuthGate() {
   // asked to set a new password.
   if (recoveryMode) return <ResetPasswordScreen />;
 
-  if (!session) return <Login />;
+  if (!session && !AUTH_BYPASS_ENABLED) return <Login />;
 
   return (
     <DataProvider>

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useToast } from './ToastContext';
 import { useAuth } from './AuthContext';
+import { AUTH_BYPASS_ENABLED } from '../lib/authBypass';
 import { generateId } from '../lib/idGenerator';
 import { addDaysISO } from '../lib/dateUtils';
 import {
@@ -40,7 +41,7 @@ export function DataProvider({ children }) {
   const [templates, setTemplates] = useState([]);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session && !AUTH_BYPASS_ENABLED) return;
     let cancelled = false;
 
     async function loadAll() {
