@@ -72,7 +72,15 @@ export default function GraphView({ prospects, deals, currency, initialTab, onTa
         />
       </div>
 
-      <div className="h-64">
+      <div
+        className="h-64"
+        role="img"
+        aria-label={
+          tab === 'revenue'
+            ? `Bar chart of pipeline value and won revenue by month, last 6 months, in ${currency}.`
+            : 'Bar chart of lead counts across each pipeline stage: New, Contacted, Qualified, Proposal, Decision, Won, Lost.'
+        }
+      >
         <ResponsiveContainer width="100%" height="100%">
           {tab === 'revenue' ? (
             <BarChart data={revenueTrend} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>

@@ -42,7 +42,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-page text-ink flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-surface-page text-ink flex items-center justify-center p-4">
       <div className="w-full max-w-sm rounded-2xl border border-line bg-surface-card shadow-popover p-8">
         <img src="/logo-mark.svg" alt="AM777" className="w-16 h-16 rounded-2xl mx-auto mb-4" />
         <p className="text-brand font-bold tracking-wide text-sm text-center">AM777</p>

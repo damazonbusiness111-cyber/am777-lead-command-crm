@@ -19,7 +19,7 @@ function AuthGate() {
 
   if (loading && !AUTH_BYPASS_ENABLED) {
     return (
-      <div className="min-h-screen bg-surface-page flex items-center justify-center">
+      <div className="min-h-dvh bg-surface-page flex items-center justify-center">
         <p className="text-ink-soft text-sm">Loading...</p>
       </div>
     );

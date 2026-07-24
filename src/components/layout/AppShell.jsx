@@ -14,7 +14,7 @@ export default function AppShell({ children }) {
   const moreActive = MORE_PATHS.some((p) => location.pathname.startsWith(p));
 
   return (
-    <div className="min-h-screen bg-surface-page text-ink flex">
+    <div className="min-h-dvh bg-surface-page text-ink flex">
       <aside className="hidden lg:block w-64 shrink-0 border-r border-line">
         <Sidebar />
       </aside>

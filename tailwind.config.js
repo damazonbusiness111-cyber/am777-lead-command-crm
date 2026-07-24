@@ -43,7 +43,10 @@ export default {
         brand: '0 0 0 1px rgba(31, 94, 255, 0.25), 0 8px 24px rgba(31, 94, 255, 0.10)'
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif']
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Modern-SaaS pairing: Plus Jakarta Sans for headings, Inter for body —
+        // gives the CRM a distinct hierarchy instead of one weight-only face.
+        heading: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif']
       },
       transitionTimingFunction: {
         // iOS's standard sheet/navigation curve.

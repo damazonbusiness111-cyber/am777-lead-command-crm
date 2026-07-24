@@ -17,6 +17,13 @@ html, body, #root {
   height: 100%;
 }
 
+@layer base {
+  h1, h2, h3 {
+    font-family: theme('fontFamily.heading');
+    letter-spacing: -0.01em;
+  }
+}
+
 body {
   background-color: #F7F9FC;
   color: #0B1739;
@@ -36,6 +43,21 @@ button {
 
 button:active {
   transform: scale(0.97);
+}
+
+/* Consistent brand focus ring for keyboard/assistive-tech navigation. Inputs
+   already get their own focus ring via Tailwind's focus:ring-2 utility, so
+   this mainly covers buttons, links, and other non-form interactive elements. */
+:focus-visible {
+  outline: 2px solid #1F5EFF;
+  outline-offset: 2px;
+}
+
+/* Prevents iOS Safari's automatic zoom-on-focus for any text input under 16px. */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
 }
 
 * {
