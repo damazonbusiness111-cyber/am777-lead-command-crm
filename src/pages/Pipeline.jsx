@@ -5,6 +5,7 @@ import PipelineBoard from '../components/pipeline/PipelineBoard';
 import LeadDetailDrawer from '../components/leads/LeadDetailDrawer';
 import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 import { suggestActionForLead } from '../lib/emailTemplates';
+import InfoTooltip from '../components/ui/InfoTooltip';
 
 export default function Pipeline() {
   const { prospects, deals, updateProspectStatus } = useData();
@@ -29,7 +30,10 @@ export default function Pipeline() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Pipeline</h1>
+        <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
+          Pipeline
+          <InfoTooltip text="Your deal stages from New to Won/Lost. Use the 'Move to…' menu on a card to change stage — moving to Lost asks for confirmation first." />
+        </h1>
         <p className="text-ink-soft text-sm mt-1">Move leads through New → Won. Use the menu on each card to change stage.</p>
       </div>
 

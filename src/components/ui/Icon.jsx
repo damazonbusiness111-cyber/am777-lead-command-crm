@@ -8,6 +8,18 @@ const PATHS = {
     </>
   ),
   send: <path d="M4 12h13M13 5l7 7-7 7" />,
+  info: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 11v5M12 8h.01" />
+    </>
+  ),
+  inbox: (
+    <>
+      <path d="M4 12h4l2 3h4l2-3h4" />
+      <path d="M5.5 5h13l1.5 7v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6L5.5 5Z" />
+    </>
+  ),
   plus: <path d="M12 5v14M5 12h14" />,
   edit: (
     <>

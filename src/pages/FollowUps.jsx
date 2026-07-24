@@ -5,6 +5,7 @@ import { isOverdue, isDueToday, isDueThisWeek } from '../lib/dateUtils';
 import FollowUpQueue from '../components/followups/FollowUpQueue';
 import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 import SegmentedControl from '../components/ui/SegmentedControl';
+import InfoTooltip from '../components/ui/InfoTooltip';
 
 const TABS = ['Today', 'Overdue', 'Upcoming', 'Completed'];
 
@@ -50,7 +51,10 @@ export default function FollowUps() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Follow-ups</h1>
+        <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
+          Follow-ups
+          <InfoTooltip text="Your daily outreach queue. Today/Overdue/Upcoming/Completed tabs, one primary action per lead based on their status — Skip and Reschedule live in the ⋯ menu." />
+        </h1>
         <p className="text-ink-soft text-sm mt-1">Your primary daily workspace — clear these first.</p>
       </div>
 

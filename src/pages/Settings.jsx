@@ -6,6 +6,7 @@ import { GMAIL_STATUS_LABEL } from '../lib/gmailStatus';
 import { EMAIL_TEMPLATE_KEYS, buildEmailFromTemplate } from '../lib/emailTemplates';
 import SegmentedControl from '../components/ui/SegmentedControl';
 import { DASHBOARD_SECTIONS, loadDashboardPrefs, saveDashboardPrefs } from '../lib/dashboardPrefs';
+import InfoTooltip from '../components/ui/InfoTooltip';
 
 const TABS = ['General', 'Dashboard', 'Email', 'Automation', 'Templates', 'Data', 'Advanced'];
 const inputClass = 'mt-1 w-full rounded-xl border border-line bg-surface-card px-3 py-2.5 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20';
@@ -68,7 +69,10 @@ export default function Settings() {
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Settings</h1>
+        <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
+          Settings
+          <InfoTooltip text="Configure your business info, Gmail status, automation defaults, email templates, data backups, and dashboard layout." />
+        </h1>
         <p className="text-ink-soft text-sm mt-1">Configure your AM777 command center.</p>
       </div>
 

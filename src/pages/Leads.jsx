@@ -11,6 +11,7 @@ import LeadDetailDrawer from '../components/leads/LeadDetailDrawer';
 import LeadForm from '../components/leads/LeadForm';
 import EmailComposerDrawer from '../components/followups/EmailComposerDrawer';
 import CopyButton from '../components/ui/CopyButton';
+import InfoTooltip from '../components/ui/InfoTooltip';
 
 const STATUS_OPTIONS = ['New', 'Researching', 'Qualified', 'Contacted', 'Follow-Up', 'Booked Call', 'Proposal Sent', 'Decision Pending', 'Won', 'Lost', 'Not Fit'];
 const PRIORITY_OPTIONS = ['Low', 'Medium', 'High', 'Urgent'];
@@ -125,7 +126,10 @@ export default function Leads() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Leads</h1>
+          <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
+            Leads
+            <InfoTooltip text="Every lead you're tracking. Search, filter by status/priority, click a row for full details, or use the Lead Angle Tool to draft a fresh outreach angle." />
+          </h1>
           <p className="text-ink-soft text-sm mt-1">{prospects.length} total leads</p>
         </div>
         <div className="flex gap-2">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import IntegrationGrid from '../components/integrations/IntegrationGrid';
 import IntegrationSetupDrawer from '../components/integrations/IntegrationSetupDrawer';
+import InfoTooltip from '../components/ui/InfoTooltip';
 import AdvancedIntegrationTools from '../components/integrations/AdvancedIntegrationTools';
 import { listApiKeys, listWebhookSubscriptions } from '../lib/integrationApi';
 import { computeIntegrationStatuses } from '../lib/integrationStatus';
@@ -33,7 +34,10 @@ export default function Integrations() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Integrations</h1>
+        <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
+          Integrations
+          <InfoTooltip text="Connect Gmail, forms, and automation tools. Status is only ever shown as Connected once it's actually verified — never assumed. Technical controls live under Advanced Tools." />
+        </h1>
         <p className="text-ink-soft text-sm mt-1">Connect the tools that power your CRM.</p>
       </div>
 

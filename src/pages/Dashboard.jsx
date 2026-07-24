@@ -7,6 +7,7 @@ import MetricCard from '../components/ui/MetricCard';
 import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
 import Icon from '../components/ui/Icon';
+import InfoTooltip from '../components/ui/InfoTooltip';
 import PriorityActions from '../components/dashboard/PriorityActions';
 import PipelineSnapshot from '../components/dashboard/PipelineSnapshot';
 import RecentLeads from '../components/dashboard/RecentLeads';
@@ -70,8 +71,9 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div style={fadeStep(0)}>
-        <h1 className="text-2xl font-bold text-ink">
+        <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
           {firstName ? `Welcome back, ${firstName}` : 'Dashboard'}
+          <InfoTooltip text="Your daily command center: metrics, what to do next, pipeline health, and recent activity. Customize what shows here in Settings → Dashboard." />
         </h1>
         <p className="text-ink-soft text-sm mt-1">Here's what needs your attention today.</p>
       </div>

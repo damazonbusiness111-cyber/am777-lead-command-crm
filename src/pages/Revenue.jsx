@@ -7,6 +7,7 @@ import StatusBadge from '../components/ui/StatusBadge';
 import EmptyState from '../components/ui/EmptyState';
 import Modal from '../components/ui/Modal';
 import Icon from '../components/ui/Icon';
+import InfoTooltip from '../components/ui/InfoTooltip';
 
 const DEAL_STATUSES = ['Draft', 'Proposal Sent', 'Negotiating', 'Won', 'Lost', 'Paid'];
 const PAYMENT_STATUSES = ['Unpaid', 'Partial', 'Paid'];
@@ -104,7 +105,10 @@ export default function Revenue() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Revenue</h1>
+          <h1 className="text-2xl font-bold text-ink inline-flex items-center gap-2">
+            Revenue
+            <InfoTooltip text="Pipeline value, won revenue, and payment status across every deal. Click Detailed Analytics to break totals down by deal status." />
+          </h1>
           <p className="text-ink-soft text-sm mt-1">Pipeline, deals, and payment status.</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="rounded-xl bg-brand text-white font-semibold px-4 py-2.5 text-sm hover:bg-brand-dark min-h-[44px]">
