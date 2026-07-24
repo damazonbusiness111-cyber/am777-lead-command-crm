@@ -32,6 +32,14 @@ export function AuthProvider({ children }) {
     return { error };
   }
 
+  async function signInWithGoogle() {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}${window.location.pathname}` }
+    });
+    return { error };
+  }
+
   async function signOut() {
     await supabase.auth.signOut();
     setRecoveryMode(false);
@@ -51,7 +59,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ session, loading, recoveryMode, signIn, signOut, sendPasswordReset, updatePassword }}>
+    <AuthContext.Provider value={{ session, loading, recoveryMode, signIn, signInWithGoogle, signOut, sendPasswordReset, updatePassword }}>
       {children}
     </AuthContext.Provider>
   );

@@ -7,4 +7,4 @@
 // anonymous requests are still rejected at the database — flipping this flag
 // does not touch RLS, so you may see empty data even with the login screen
 // skipped, since that part is enforced server-side, not here.
-export const AUTH_BYPASS_ENABLED = true;
+export const AUTH_BYPASS_ENABLED = false;
