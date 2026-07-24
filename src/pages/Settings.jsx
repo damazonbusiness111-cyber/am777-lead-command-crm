@@ -58,7 +58,7 @@ export default function Settings() {
         const bundle = JSON.parse(reader.result);
         await handleImport(bundle);
         showToast('Data imported');
-      } catch (err) {
+      } catch {
         showToast('Invalid backup file', 'error');
       }
     };

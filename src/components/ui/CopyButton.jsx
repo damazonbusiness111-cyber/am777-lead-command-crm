@@ -12,7 +12,7 @@ export default function CopyButton({ text, label = 'Copy' }) {
       setCopied(true);
       showToast('Copied to clipboard');
       setTimeout(() => setCopied(false), 1500);
-    } catch (err) {
+    } catch {
       showToast('Could not copy — select and copy manually', 'error');
     }
   }

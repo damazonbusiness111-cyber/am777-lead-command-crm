@@ -1,10 +1,10 @@
 # AM777 Lead Command CRM
 
-Private internal PWA dashboard for AM777 Automation Solutions — generate niche-based lead angles, track prospects, log outreach, manage follow-ups, and track deals/revenue. Backed by Supabase (Postgres) so data is real, online, and shared across every device you sign into.
+Private internal PWA dashboard for AM777 Automation Solutions — track leads, move deals through a pipeline, run daily follow-ups with a Gmail-ready composer, and track revenue. Backed by Supabase (Postgres) so data is real, online, and shared across every device you sign into.
 
 ## Stack
 
-React + Vite + Tailwind CSS + `vite-plugin-pwa` + Supabase (Postgres + Auth). All lead-angle/offer/outreach generation is still template-based string logic in `src/lib/templates.js` — no AI API, no scraping.
+React + React Router + Vite + Tailwind CSS + `vite-plugin-pwa` + Supabase (Postgres + Auth, incl. Google OAuth) + Recharts (lazy-loaded, Dashboard graph only). Lead-angle/offer/outreach generation is still template-based string logic in `src/lib/templates.js` and `src/lib/emailTemplates.js` — no AI API, no scraping. `npm run lint` runs ESLint (flat config, `eslint.config.js`).
 
 ## One-time Supabase setup
 
@@ -53,14 +53,19 @@ Six Postgres tables (see `supabase/schema.sql`): `prospects`, `outreach_logs`, `
 
 | Page | Route | Purpose |
 |---|---|---|
-| Dashboard | `/` | Metric cards + today's follow-ups, hot prospects, recent outreach, recent deals |
-| Lead Generator | `/lead-generator` | Pick niche/offer/pain point/tone/CTA → generates target profile, search keywords, qualification checklist, offer snippet, outreach snippet, follow-up snippet, CTA. Save as template or create a prospect directly. |
-| Prospects CRM | `/prospects` | Add/edit/delete, search, filter by status/priority, sort, detail drawer with outreach/follow-up/deal actions, quick status update |
-| Outreach Snippets | `/outreach` | Pick a saved prospect → generates a 5-stage message sequence (first outreach → proposal follow-up), editable/copyable, plus full outreach history with filters |
-| Follow-Up Board | `/follow-ups` | Overdue / Due Today / Due This Week / Completed columns, mark done, reschedule, log outreach, move prospect status |
-| Deals / Revenue | `/deals` | Add/edit/delete deals, pipeline/won/paid/unpaid revenue cards |
-| Daily Command | `/daily` | Today's execution view — due/overdue follow-ups, hot prospects, prospects missing a next follow-up date, suggested actions, daily checklist |
-| Settings | `/settings` | Brand name, owner name, default currency, n8n webhook URL placeholder, export/import data, sign out |
+| Dashboard | `/` | 4 key metrics, Priority (recommended) Actions, an optional Revenue Trend / Leads by Status graph, Pipeline Snapshot, Recent Leads/Follow-ups/Revenue — sections are toggleable in Settings → Dashboard |
+| Leads | `/leads` | Searchable lead table, status/priority filters, CSV import, detail drawer (outreach history, follow-up, deal), plus an in-page Lead Angle Tool for template-based prospecting angles |
+| Pipeline | `/pipeline` | Kanban-style board, New → Won/Lost, move a lead's stage via its card menu |
+| Follow-ups | `/follow-ups` | Today / Overdue / Upcoming / Completed tabs; one contextual primary action per lead (Send First Email, Follow Up, etc.), swipe-to-complete on touch devices, overflow menu for Reschedule/Note/Skip/Move Status |
+| Revenue | `/revenue` | Pipeline value, won/paid/unpaid totals, deal table, collapsible detailed analytics |
+| Integrations | `/integrations` | Visual connection cards (Gmail, forms, n8n, Zapier/Make, webhooks, etc.) with honest, verified-only status; API keys/webhooks/logs live under the collapsed Advanced Tools section |
+| Settings | `/settings` | General, Dashboard (section visibility), Email, Automation, Templates (preview), Data (export/import), Advanced (account/sign out) |
+
+A floating Quick Actions button (bottom-right) jumps straight to the most urgent follow-up or opens the Lead Angle Tool — template-based, not AI-backed.
+
+### Gmail-ready follow-ups
+
+Sending an email never happens inside the app. The composer drawer builds a subject/body from a template, personalized with the lead's real data, and "Open in Gmail" opens `mail.google.com`'s compose view prefilled via `src/lib/gmailCompose.js` — a signed-in user reviews and hits send themselves. Nothing is logged as sent until you click **Mark Sent & Complete** afterward. Google sign-in (`signInWithOAuth`) requires enabling the Google provider in Supabase's Auth settings first.
 
 ## Automatic behavior (mirrors the eventual n8n logic)
 

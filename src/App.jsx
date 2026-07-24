@@ -1,4 +1,5 @@
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { DataProvider } from './context/DataContext';
@@ -44,6 +45,7 @@ function AuthGate() {
             <Route path="/revenue" element={<Revenue />} />
             <Route path="/integrations" element={<Integrations />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AppShell>
       </HashRouter>
@@ -53,10 +55,12 @@ function AuthGate() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <AuthGate />
-      </ToastProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <AuthGate />
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

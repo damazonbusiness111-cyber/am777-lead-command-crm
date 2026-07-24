@@ -1,5 +1,4 @@
 import StatusBadge from '../ui/StatusBadge';
-import PriorityBadge from '../ui/PriorityBadge';
 import EmptyState from '../ui/EmptyState';
 import Icon from '../ui/Icon';
 import { formatDate } from '../../lib/dateUtils';
